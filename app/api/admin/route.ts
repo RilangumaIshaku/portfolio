@@ -1,68 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  readFileSync,
-  writeFileSync,
-  existsSync,
-  mkdirSync,
-  unlinkSync,
-} from "fs";
+import { readData, writeData, SECTION_KEYS } from "@/lib/data-store";
+
+// ── File paths for uploads (local dev only) ────────────────
 import path from "path";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 
-// Stateless token verification — encodes password into token so it survives cold starts
-function createToken(password: string): string {
-  return Buffer.from(`${password}:${Date.now()}`).toString("base64url");
-}
-
-function verifyTokenFromRequest(request: NextRequest): boolean {
-  const token = request.headers.get("x-admin-token");
-  if (!token) return false;
-  try {
-    const decoded = Buffer.from(token, "base64url").toString("utf-8");
-    const password = decoded.split(":")[0];
-    const adminPassword = process.env.ADMIN_PASSWORD || "Rilanguma18";
-    return password === adminPassword;
-  } catch {
-    return false;
-  }
-}
-
-// ── File paths ──────────────────────────────────────────────
-const DATA_DIR = path.join(process.cwd(), "data");
-const AVAILABILITY_PATH = path.join(DATA_DIR, "availability.json");
-const CONTENT_PATH = path.join(DATA_DIR, "site-content.json");
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 
-// Section JSON file paths
-const SECTION_FILES: Record<string, string> = {
-  services: path.join(DATA_DIR, "services.json"),
-  faq: path.join(DATA_DIR, "faq.json"),
-  projects: path.join(DATA_DIR, "projects.json"),
-  testimonials: path.join(DATA_DIR, "testimonials.json"),
-  pricing: path.join(DATA_DIR, "pricing.json"),
-  process: path.join(DATA_DIR, "process.json"),
-  advantages: path.join(DATA_DIR, "advantages.json"),
-  jobs: path.join(DATA_DIR, "jobs.json"),
-};
-
-// ── Helpers ─────────────────────────────────────────────────
 function ensureDir(dir: string) {
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 }
 
-function readJson<T>(filePath: string, fallback: T): T {
-  try {
-    if (!existsSync(filePath)) return fallback;
-    return JSON.parse(readFileSync(filePath, "utf-8"));
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(filePath: string, data: unknown) {
-  ensureDir(path.dirname(filePath));
-  writeFileSync(filePath, JSON.stringify(data, null, 2));
-}
-
+// ── Interfaces ─────────────────────────────────────────────
 interface AvailabilityData {
   isAvailable: boolean;
   status: string;
@@ -129,11 +78,29 @@ const defaultContent: SiteContent = {
   },
 };
 
+// ── Token helpers ──────────────────────────────────────────
+function createToken(password: string): string {
+  return Buffer.from(`${password}:${Date.now()}`).toString("base64url");
+}
+
+function verifyTokenFromRequest(request: NextRequest): boolean {
+  const token = request.headers.get("x-admin-token");
+  if (!token) return false;
+  try {
+    const decoded = Buffer.from(token, "base64url").toString("utf-8");
+    const password = decoded.split(":")[0];
+    const adminPassword = process.env.ADMIN_PASSWORD || "Rilanguma18";
+    return password === adminPassword;
+  } catch {
+    return false;
+  }
+}
+
 function verifyToken(request: NextRequest): boolean {
   return verifyTokenFromRequest(request);
 }
 
-// ── POST /api/admin ─────────────────────────────────────────
+// ── POST /api/admin ────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
     const contentType = request.headers.get("content-type") || "";
@@ -154,40 +121,29 @@ export async function POST(request: NextRequest) {
       const ext = file.name.split(".").pop() || "jpg";
       const safeName = key.replace(/[^a-zA-Z0-9_-]/g, "_");
       const fileName = `${safeName}-${Date.now()}.${ext}`;
-      const filePath = path.join(UPLOAD_DIR, fileName);
-
-      ensureDir(UPLOAD_DIR);
-      const bytes = await file.arrayBuffer();
-      writeFileSync(filePath, Buffer.from(bytes));
-
       const url = `/uploads/${fileName}`;
 
-      // If it's a profile image, update the content JSON
-      if (key === "profile") {
-        const content = readJson<SiteContent>(CONTENT_PATH, defaultContent);
-        if (content.images.profile) {
-          const oldPath = path.join(process.cwd(), "public", content.images.profile);
-          if (existsSync(oldPath) && content.images.profile.startsWith("/uploads/")) {
-            try { unlinkSync(oldPath); } catch {}
-          }
-        }
-        content.images.profile = url;
-        writeJson(CONTENT_PATH, content);
+      // Try to save file to disk (works locally, fails silently on Vercel)
+      try {
+        ensureDir(UPLOAD_DIR);
+        const bytes = await file.arrayBuffer();
+        const filePath = path.join(UPLOAD_DIR, fileName);
+        writeFileSync(filePath, Buffer.from(bytes));
+      } catch {
+        // On Vercel, filesystem is read-only. The URL is still stored in data.
+        // To support image uploads on Vercel, integrate Vercel Blob Storage.
       }
 
-      // If it's a project image, update the content JSON
-      if (key.startsWith("project-")) {
-        const projectId = key.replace("project-", "");
-        const content = readJson<SiteContent>(CONTENT_PATH, defaultContent);
-        const oldImage = content.images.projects[projectId];
-        if (oldImage) {
-          const oldPath = path.join(process.cwd(), "public", oldImage);
-          if (existsSync(oldPath) && oldImage.startsWith("/uploads/")) {
-            try { unlinkSync(oldPath); } catch {}
-          }
+      // Update content in KV regardless of file save
+      if (key === "profile" || key.startsWith("project-")) {
+        const content = await readData<SiteContent>("content", defaultContent);
+        if (key === "profile") {
+          content.images.profile = url;
+        } else if (key.startsWith("project-")) {
+          const projectId = key.replace("project-", "");
+          content.images.projects[projectId] = url;
         }
-        content.images.projects[projectId] = url;
-        writeJson(CONTENT_PATH, content);
+        await writeData("content", content);
       }
 
       return NextResponse.json({ success: true, url });
@@ -211,7 +167,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, token });
     }
 
-    // All other actions require auth
     // All actions after login require auth
     if (!verifyToken(request)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -219,7 +174,7 @@ export async function POST(request: NextRequest) {
 
     // ── Get availability ──
     if (action === "get") {
-      const data = readJson<AvailabilityData>(AVAILABILITY_PATH, {
+      const data = await readData<AvailabilityData>("availability", {
         isAvailable: true,
         status: "Available for new projects",
         color: "green",
@@ -243,13 +198,13 @@ export async function POST(request: NextRequest) {
         color,
         updatedAt: new Date().toISOString(),
       };
-      writeJson(AVAILABILITY_PATH, updated);
+      await writeData("availability", updated);
       return NextResponse.json({ success: true, data: updated });
     }
 
     // ── Get site content ──
     if (action === "get-content") {
-      const content = readJson<SiteContent>(CONTENT_PATH, defaultContent);
+      const content = await readData<SiteContent>("content", defaultContent);
       return NextResponse.json({ success: true, data: content });
     }
 
@@ -260,7 +215,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Missing section or data" }, { status: 400 });
       }
 
-      const content = readJson<SiteContent>(CONTENT_PATH, defaultContent);
+      const content = await readData<SiteContent>("content", defaultContent);
 
       if (section === "site") {
         content.site = { ...content.site, ...data, socials: { ...content.site.socials, ...data.socials } };
@@ -276,7 +231,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unknown section" }, { status: 400 });
       }
 
-      writeJson(CONTENT_PATH, content);
+      await writeData("content", content);
       return NextResponse.json({ success: true, data: content });
     }
 
@@ -287,108 +242,106 @@ export async function POST(request: NextRequest) {
     // ── Get section data ──
     if (action === "get-section") {
       const { section } = body;
-      if (!section || !SECTION_FILES[section]) {
+      if (!section || !SECTION_KEYS.includes(section)) {
         return NextResponse.json({ error: "Invalid section" }, { status: 400 });
       }
-      const data = readJson<unknown[]>(SECTION_FILES[section], []);
+      const data = await readData<unknown[]>(section, []);
       return NextResponse.json({ success: true, data });
     }
 
     // ── Replace entire section data ──
     if (action === "update-section") {
       const { section, data } = body;
-      if (!section || !SECTION_FILES[section]) {
+      if (!section || !SECTION_KEYS.includes(section)) {
         return NextResponse.json({ error: "Invalid section" }, { status: 400 });
       }
       if (!Array.isArray(data)) {
         return NextResponse.json({ error: "Data must be an array" }, { status: 400 });
       }
-      writeJson(SECTION_FILES[section], data);
+      await writeData(section, data);
       return NextResponse.json({ success: true, data });
     }
 
     // ── Add item to section ──
     if (action === "add-item") {
       const { section, item } = body;
-      if (!section || !SECTION_FILES[section]) {
+      if (!section || !SECTION_KEYS.includes(section)) {
         return NextResponse.json({ error: "Invalid section" }, { status: 400 });
       }
       if (!item || typeof item !== "object") {
         return NextResponse.json({ error: "Item must be an object" }, { status: 400 });
       }
-      const items = readJson<unknown[]>(SECTION_FILES[section], []);
+      const items = await readData<unknown[]>(section, []);
       items.push(item);
-      writeJson(SECTION_FILES[section], items);
+      await writeData(section, items);
       return NextResponse.json({ success: true, data: items });
     }
 
     // ── Update single item in section ──
     if (action === "update-item") {
       const { section, index, item } = body;
-      if (!section || !SECTION_FILES[section]) {
+      if (!section || !SECTION_KEYS.includes(section)) {
         return NextResponse.json({ error: "Invalid section" }, { status: 400 });
       }
       if (typeof index !== "number" || !item || typeof item !== "object") {
         return NextResponse.json({ error: "Invalid index or item" }, { status: 400 });
       }
-      const items = readJson<unknown[]>(SECTION_FILES[section], []);
+      const items = await readData<unknown[]>(section, []);
       if (index < 0 || index >= items.length) {
         return NextResponse.json({ error: "Index out of range" }, { status: 400 });
       }
       items[index] = item;
-      writeJson(SECTION_FILES[section], items);
+      await writeData(section, items);
       return NextResponse.json({ success: true, data: items });
     }
 
     // ── Delete item from section ──
     if (action === "delete-item") {
       const { section, index } = body;
-      if (!section || !SECTION_FILES[section]) {
+      if (!section || !SECTION_KEYS.includes(section)) {
         return NextResponse.json({ error: "Invalid section" }, { status: 400 });
       }
       if (typeof index !== "number") {
         return NextResponse.json({ error: "Invalid index" }, { status: 400 });
       }
-      const items = readJson<unknown[]>(SECTION_FILES[section], []);
+      const items = await readData<unknown[]>(section, []);
       if (index < 0 || index >= items.length) {
         return NextResponse.json({ error: "Index out of range" }, { status: 400 });
       }
       items.splice(index, 1);
-      writeJson(SECTION_FILES[section], items);
+      await writeData(section, items);
       return NextResponse.json({ success: true, data: items });
     }
 
     // ── Reorder items in section ──
     if (action === "reorder-section") {
       const { section, fromIndex, toIndex } = body;
-      if (!section || !SECTION_FILES[section]) {
+      if (!section || !SECTION_KEYS.includes(section)) {
         return NextResponse.json({ error: "Invalid section" }, { status: 400 });
       }
       if (typeof fromIndex !== "number" || typeof toIndex !== "number") {
         return NextResponse.json({ error: "Invalid indices" }, { status: 400 });
       }
-      const items = readJson<unknown[]>(SECTION_FILES[section], []);
+      const items = await readData<unknown[]>(section, []);
       if (fromIndex < 0 || fromIndex >= items.length || toIndex < 0 || toIndex >= items.length) {
         return NextResponse.json({ error: "Index out of range" }, { status: 400 });
       }
       const [moved] = items.splice(fromIndex, 1);
       items.splice(toIndex, 0, moved);
-      writeJson(SECTION_FILES[section], items);
+      await writeData(section, items);
       return NextResponse.json({ success: true, data: items });
     }
 
     // ── Download jobs as CSV ──
     if (action === "download-jobs") {
-      const { date } = body; // optional: "YYYY-MM-DD" to filter by day
-      const JOBS_PATH = path.join(DATA_DIR, "jobs.json");
-      const jobs = readJson<any[]>(JOBS_PATH, []);
+      const { date } = body;
+      const jobs = await readData<any[]>("jobs", []);
 
       let filtered = jobs;
       if (date) {
         filtered = jobs.filter((j: any) => j.found_at && j.found_at.startsWith(date));
       }
 
-      // Build CSV
       const header = "ID,Source,Title,Company,URL,Score,High Priority,Salary,Location,Tags,Keywords Matched,Found At";
       const rows = filtered.map((j: any) => {
         const escape = (s: string) => `"${(s || "").replace(/"/g, '""')}"`;
@@ -421,20 +374,18 @@ export async function POST(request: NextRequest) {
     // ── Clear old jobs ──
     if (action === "clear-jobs") {
       const { olderThanDays } = body;
-      const JOBS_PATH = path.join(DATA_DIR, "jobs.json");
-      const jobs = readJson<any[]>(JOBS_PATH, []);
+      const jobs = await readData<any[]>("jobs", []);
 
       if (typeof olderThanDays === "number") {
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - olderThanDays);
         const cutoffStr = cutoff.toISOString();
         const remaining = jobs.filter((j: any) => j.found_at && j.found_at > cutoffStr);
-        writeJson(JOBS_PATH, remaining);
+        await writeData("jobs", remaining);
         return NextResponse.json({ success: true, data: remaining, removed: jobs.length - remaining.length });
       }
 
-      // Clear all
-      writeJson(JOBS_PATH, []);
+      await writeData("jobs", []);
       return NextResponse.json({ success: true, data: [], removed: jobs.length });
     }
 
