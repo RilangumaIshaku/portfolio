@@ -28,7 +28,7 @@ function getRedis() {
   }
 }
 
-const USE_KV = !!process.env.UPSTASH_REDIS_REST_URL;
+export const USE_KV = !!process.env.UPSTASH_REDIS_REST_URL;
 
 // ── KV key prefix ──────────────────────────────────────────
 const KEY_PREFIX = "portfolio:";
@@ -108,7 +108,7 @@ function resolveFilePath(section: string): string | null {
 /**
  * Read data for a section.
  * On Vercel: tries KV first, falls back to fs-bundled file, seeds KV if empty.
- * Locally: reads from fs directly.
+ * Locally: reads from filesystem directly.
  */
 export async function readData<T>(section: string, fallback: T): Promise<T> {
   const filePath = resolveFilePath(section);
@@ -138,24 +138,33 @@ export async function readData<T>(section: string, fallback: T): Promise<T> {
 
 /**
  * Write data for a section.
- * On Vercel: writes to KV (and tries fs too, which will silently fail — that's OK).
- * Locally: writes to fs.
+ * Returns { ok: true } on success, { ok: false, reason: string } on failure.
  */
-export async function writeData<T>(section: string, data: T): Promise<void> {
+export async function writeData<T>(section: string, data: T): Promise<{ ok: boolean; reason?: string }> {
   const filePath = resolveFilePath(section);
 
+  // On Vercel: write to KV (the only reliable persistence)
   if (USE_KV) {
-    await kvSet(section, data);
+    try {
+      await kvSet(section, data);
+      return { ok: true };
+    } catch (err) {
+      console.error(`KV write failed for ${section}:`, err);
+      return { ok: false, reason: "Redis write failed" };
+    }
   }
 
-  // Always try fs too (works locally, silently fails on Vercel — fine)
+  // Local dev: write to filesystem
   if (filePath) {
     try {
       writeFsJson(filePath, data);
-    } catch {
-      // Expected to fail on Vercel's read-only filesystem
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, reason: "Filesystem write failed" };
     }
   }
+
+  return { ok: false, reason: "No storage available" };
 }
 
 /**

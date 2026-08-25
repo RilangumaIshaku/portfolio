@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readData, writeData, SECTION_KEYS } from "@/lib/data-store";
+import { revalidatePath } from "next/cache";
+import { readData, writeData, SECTION_KEYS, USE_KV } from "@/lib/data-store";
 
 // ── File paths for uploads (local dev only) ────────────────
 import path from "path";
@@ -100,6 +101,11 @@ function verifyToken(request: NextRequest): boolean {
   return verifyTokenFromRequest(request);
 }
 
+// ── Helper: invalidate homepage ISR cache ──────────────────
+function bustCache() {
+  revalidatePath("/");
+}
+
 // ── POST /api/admin ────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
@@ -131,7 +137,6 @@ export async function POST(request: NextRequest) {
         writeFileSync(filePath, Buffer.from(bytes));
       } catch {
         // On Vercel, filesystem is read-only. The URL is still stored in data.
-        // To support image uploads on Vercel, integrate Vercel Blob Storage.
       }
 
       // Update content in KV regardless of file save
@@ -143,7 +148,14 @@ export async function POST(request: NextRequest) {
           const projectId = key.replace("project-", "");
           content.images.projects[projectId] = url;
         }
-        await writeData("content", content);
+        const result = await writeData("content", content);
+        if (!result.ok) {
+          return NextResponse.json(
+            { error: `Save failed: ${result.reason}. Data will not persist. Please configure Vercel KV (Redis).` },
+            { status: 500 }
+          );
+        }
+        bustCache();
       }
 
       return NextResponse.json({ success: true, url });
@@ -198,7 +210,14 @@ export async function POST(request: NextRequest) {
         color,
         updatedAt: new Date().toISOString(),
       };
-      await writeData("availability", updated);
+      const result = await writeData("availability", updated);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
+      bustCache();
       return NextResponse.json({ success: true, data: updated });
     }
 
@@ -231,7 +250,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unknown section" }, { status: 400 });
       }
 
-      await writeData("content", content);
+      const result = await writeData("content", content);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
+      bustCache();
       return NextResponse.json({ success: true, data: content });
     }
 
@@ -258,7 +284,14 @@ export async function POST(request: NextRequest) {
       if (!Array.isArray(data)) {
         return NextResponse.json({ error: "Data must be an array" }, { status: 400 });
       }
-      await writeData(section, data);
+      const result = await writeData(section, data);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
+      bustCache();
       return NextResponse.json({ success: true, data });
     }
 
@@ -273,7 +306,14 @@ export async function POST(request: NextRequest) {
       }
       const items = await readData<unknown[]>(section, []);
       items.push(item);
-      await writeData(section, items);
+      const result = await writeData(section, items);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
+      bustCache();
       return NextResponse.json({ success: true, data: items });
     }
 
@@ -291,7 +331,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Index out of range" }, { status: 400 });
       }
       items[index] = item;
-      await writeData(section, items);
+      const result = await writeData(section, items);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
+      bustCache();
       return NextResponse.json({ success: true, data: items });
     }
 
@@ -309,7 +356,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Index out of range" }, { status: 400 });
       }
       items.splice(index, 1);
-      await writeData(section, items);
+      const result = await writeData(section, items);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
+      bustCache();
       return NextResponse.json({ success: true, data: items });
     }
 
@@ -328,7 +382,14 @@ export async function POST(request: NextRequest) {
       }
       const [moved] = items.splice(fromIndex, 1);
       items.splice(toIndex, 0, moved);
-      await writeData(section, items);
+      const result = await writeData(section, items);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
+      bustCache();
       return NextResponse.json({ success: true, data: items });
     }
 
@@ -381,11 +442,23 @@ export async function POST(request: NextRequest) {
         cutoff.setDate(cutoff.getDate() - olderThanDays);
         const cutoffStr = cutoff.toISOString();
         const remaining = jobs.filter((j: any) => j.found_at && j.found_at > cutoffStr);
-        await writeData("jobs", remaining);
+        const result = await writeData("jobs", remaining);
+        if (!result.ok) {
+          return NextResponse.json(
+            { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+            { status: 500 }
+          );
+        }
         return NextResponse.json({ success: true, data: remaining, removed: jobs.length - remaining.length });
       }
 
-      await writeData("jobs", []);
+      const result = await writeData("jobs", []);
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: `Save failed: ${result.reason}. Please configure Vercel KV (Redis).` },
+          { status: 500 }
+        );
+      }
       return NextResponse.json({ success: true, data: [], removed: jobs.length });
     }
 
