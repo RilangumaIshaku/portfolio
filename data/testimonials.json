@@ -1,0 +1,37 @@
+[
+  {
+    "quote": "Your testimonial will appear here.",
+    "name": "Client Name",
+    "role": "Role / Company",
+    "image": "/images/placeholder-avatar.jpg",
+    "isPlaceholder": true
+  },
+  {
+    "quote": "Your testimonial will appear here.",
+    "name": "Client Name",
+    "role": "Role / Company",
+    "image": "/images/placeholder-avatar.jpg",
+    "isPlaceholder": true
+  },
+  {
+    "quote": "Your testimonial will appear here.",
+    "name": "Client Name",
+    "role": "Role / Company",
+    "image": "/images/placeholder-avatar.jpg",
+    "isPlaceholder": true
+  },
+  {
+    "quote": "Your testimonial will appear here.",
+    "name": "Client Name",
+    "role": "Role / Company",
+    "image": "/images/placeholder-avatar.jpg",
+    "isPlaceholder": true
+  },
+  {
+    "quote": "Your testimonial will appear here.",
+    "name": "Client Name",
+    "role": "Role / Company",
+    "image": "/images/placeholder-avatar.jpg",
+    "isPlaceholder": true
+  }
+]

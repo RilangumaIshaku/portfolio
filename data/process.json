@@ -1,0 +1,38 @@
+[
+  {
+    "number": "1",
+    "title": "Discovery & Direction",
+    "description": "We start by understanding your business, goals, audience and what the website needs to achieve.",
+    "image": "/uploads/process-step-0-image-1787604262441.jpg"
+  },
+  {
+    "number": "2",
+    "title": "Strategy & Structure",
+    "description": "I define the website structure, priorities and user journey before the main build begins.",
+    "image": "/uploads/process-step-1-image-1787604278310.jpg"
+  },
+  {
+    "number": "3",
+    "title": "Wireframing & User Flow",
+    "description": "I map the layout and user experience so every section has a clear purpose.",
+    "image": "/uploads/process-step-2-image-1787604288449.jpg"
+  },
+  {
+    "number": "4",
+    "title": "Visual Design & Interaction",
+    "description": "I turn the structure into a polished visual experience with thoughtful details and interactions.",
+    "image": "/uploads/process-step-3-image-1787604333940.jpg"
+  },
+  {
+    "number": "5",
+    "title": "Development & Refinement",
+    "description": "I build the website, make it responsive and refine the details across devices.",
+    "image": "/uploads/process-step-4-image-1787604306751.avif"
+  },
+  {
+    "number": "6",
+    "title": "Testing & Launch",
+    "description": "Everything is tested, optimized and deployed so the final product is ready for real users.",
+    "image": "/uploads/process-step-5-image-1787604311645.jpg"
+  }
+]

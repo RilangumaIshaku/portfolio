@@ -1,0 +1,26 @@
+[
+  {
+    "question": "How long does it take to build a website?",
+    "answer": "Most projects are completed within 2–6 weeks, depending on complexity. A simple business website can be ready in about two weeks, while more complex projects with custom functionality may take longer. I'll provide a clear timeline after our discovery call."
+  },
+  {
+    "question": "Do you work with businesses outside Nigeria?",
+    "answer": "Absolutely. While I'm based in Nigeria and work with many local businesses, I collaborate with clients worldwide. Remote collaboration is seamless — we'll use tools like Slack, Zoom, and shared project boards to stay connected."
+  },
+  {
+    "question": "What do I need to provide before we start?",
+    "answer": "At minimum, I'll need your brand assets (logo, brand colors if any), content (text, images), and a clear idea of what you want the website to achieve. Don't worry if you don't have everything — we'll figure it out together during the discovery phase."
+  },
+  {
+    "question": "Do you provide hosting and domain?",
+    "answer": "I can help you set up hosting and domain registration and will recommend the best options for your needs. I typically deploy on Vercel, Netlify, or similar modern platforms. Hosting costs are separate from the project fee."
+  },
+  {
+    "question": "Will my website work on mobile?",
+    "answer": "Every website I build is fully responsive and optimized for mobile, tablet, and desktop. I test across multiple screen sizes and devices before launch. Mobile-first design is a core part of my process."
+  },
+  {
+    "question": "What happens after the website launches?",
+    "answer": "I offer post-launch support to handle any issues or adjustments. Depending on your plan, this may include a support period. For ongoing updates, maintenance, or new features, I offer flexible retainer arrangements."
+  }
+]
