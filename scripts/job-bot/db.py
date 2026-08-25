@@ -2,8 +2,8 @@ import os
 import requests
 import json
 
-UPSTASH_URL = os.getenv("UPSTASH_REDIS_REST_URL")
-UPSTASH_TOKEN = os.getenv("UPSTASH_REDIS_REST_TOKEN")
+UPSTASH_URL = os.getenv("KV_REST_API_URL") or os.getenv("UPSTASH_REDIS_REST_URL")
+UPSTASH_TOKEN = os.getenv("KV_REST_API_TOKEN") or os.getenv("UPSTASH_REDIS_REST_TOKEN")
 
 def _redis_req(command, *args):
     if not UPSTASH_URL or not UPSTASH_TOKEN:
@@ -20,7 +20,7 @@ def _redis_req(command, *args):
 
 def init_db():
     if not UPSTASH_URL:
-        print("[WARNING] UPSTASH_REDIS_REST_URL not set. Redis calls will fail.")
+        print("[WARNING] KV_REST_API_URL/UPSTASH_REDIS_REST_URL not set. Redis calls will fail.")
 
 def is_seen(job_id: str) -> bool:
     res = _redis_req("SISMEMBER", "portfolio:seen_jobs", job_id)

@@ -15,8 +15,8 @@ let redisClient: any = null;
 
 function getRedis() {
   if (redisClient) return redisClient;
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
   // Dynamic import to avoid build errors when env vars are missing
   try {
@@ -28,7 +28,7 @@ function getRedis() {
   }
 }
 
-export const USE_KV = !!process.env.UPSTASH_REDIS_REST_URL;
+export const USE_KV = !!(process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL);
 
 // ── KV key prefix ──────────────────────────────────────────
 const KEY_PREFIX = "portfolio:";
