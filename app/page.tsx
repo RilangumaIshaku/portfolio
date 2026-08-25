@@ -1,5 +1,3 @@
-import { readFileSync, existsSync } from "fs";
-import path from "path";
 import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/hero";
 import { TrustStrip } from "@/components/trust-strip";
@@ -11,7 +9,11 @@ import { Pricing } from "@/components/pricing";
 import { FAQ } from "@/components/faq";
 import { Contact } from "@/components/contact";
 import { Footer } from "@/components/footer";
-import { getSiteContent, type SiteContent } from "@/lib/siteContent";
+import { getSiteContentAsync } from "@/lib/siteContent";
+import { readData } from "@/lib/data-store";
+
+// Revalidate every 60 seconds so admin edits reflect on the live site
+export const revalidate = 60;
 
 interface AvailabilityData {
   isAvailable: boolean;
@@ -19,30 +21,17 @@ interface AvailabilityData {
   color: "green" | "yellow" | "red";
 }
 
-function readJson<T>(filePath: string, fallback: T): T {
-  try {
-    if (!existsSync(filePath)) return fallback;
-    return JSON.parse(readFileSync(filePath, "utf-8"));
-  } catch {
-    return fallback;
-  }
-}
-
-function getAvailability(): AvailabilityData {
-  return readJson(path.join(process.cwd(), "data", "availability.json"), {
-    isAvailable: true,
-    status: "Available for new projects",
-    color: "green",
-  });
-}
-
-export default function Home() {
-  const availability = getAvailability();
-  const content = getSiteContent();
-
-  // Read section data from JSON files so client components get fresh data
-  const processData = readJson<any[]>(path.join(process.cwd(), "data", "process.json"), []);
-  const testimonialsData = readJson<any[]>(path.join(process.cwd(), "data", "testimonials.json"), []);
+export default async function Home() {
+  const [content, availability, processData, testimonialsData] = await Promise.all([
+    getSiteContentAsync(),
+    readData<AvailabilityData>("availability", {
+      isAvailable: true,
+      status: "Available for new projects",
+      color: "green",
+    }),
+    readData<any[]>("process", []),
+    readData<any[]>("testimonials", []),
+  ]);
 
   return (
     <>

@@ -1,6 +1,7 @@
 import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { siteConfig } from "@/data/siteConfig";
+import { readData } from "@/lib/data-store";
 
 export interface SiteContent {
   site: {
@@ -41,7 +42,7 @@ export interface SiteContent {
 
 const CONTENT_PATH = path.join(process.cwd(), "data", "site-content.json");
 
-const defaults: SiteContent = {
+export const defaults: SiteContent = {
   site: {
     name: siteConfig.name,
     brand: siteConfig.brand,
@@ -81,22 +82,41 @@ const defaults: SiteContent = {
   },
 };
 
+/**
+ * Deep-merge raw content with defaults so missing fields are always filled in.
+ */
+function mergeWithDefaults(raw: Partial<SiteContent>): SiteContent {
+  return {
+    site: { ...defaults.site, ...raw.site, socials: { ...defaults.site.socials, ...raw.site?.socials } },
+    seo: { ...defaults.seo, ...raw.seo },
+    hero: { ...defaults.hero, ...raw.hero },
+    images: {
+      profile: raw.images?.profile || defaults.images.profile,
+      projects: { ...defaults.images.projects, ...raw.images?.projects },
+    },
+    links: { ...defaults.links, ...raw.links },
+  };
+}
+
+/**
+ * Sync version — reads from filesystem at build time.
+ * Used by layout.tsx for generateMetadata and as a fallback.
+ */
 export function getSiteContent(): SiteContent {
   try {
     if (!existsSync(CONTENT_PATH)) return defaults;
     const raw = JSON.parse(readFileSync(CONTENT_PATH, "utf-8"));
-    // Deep merge with defaults so missing fields are filled in
-    return {
-      site: { ...defaults.site, ...raw.site, socials: { ...defaults.site.socials, ...raw.site?.socials } },
-      seo: { ...defaults.seo, ...raw.seo },
-      hero: { ...defaults.hero, ...raw.hero },
-      images: {
-        profile: raw.images?.profile || defaults.images.profile,
-        projects: { ...defaults.images.projects, ...raw.images?.projects },
-      },
-      links: { ...defaults.links, ...raw.links },
-    };
+    return mergeWithDefaults(raw);
   } catch {
     return defaults;
   }
+}
+
+/**
+ * Async version — reads from data-store (Redis on Vercel, fs locally).
+ * Used by page.tsx at request time so admin edits are reflected.
+ */
+export async function getSiteContentAsync(): Promise<SiteContent> {
+  const raw = await readData<Partial<SiteContent>>("content", defaults);
+  return mergeWithDefaults(raw);
 }
