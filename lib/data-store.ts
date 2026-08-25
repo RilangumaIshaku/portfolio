@@ -14,6 +14,7 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import path from "path";
+import { Redis } from "@upstash/redis";
 
 // ── In-memory cache (reflects writes immediately within a warm serverless instance) ──
 const memStore: Record<string, unknown> = {};
@@ -27,10 +28,10 @@ function getRedis() {
   const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
   try {
-    const { Redis } = require("@upstash/redis");
     redisClient = new Redis({ url, token });
     return redisClient;
-  } catch {
+  } catch (err) {
+    console.error("Failed to initialize Redis client:", err);
     return null;
   }
 }
