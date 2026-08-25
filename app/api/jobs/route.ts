@@ -1,19 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readData, writeData } from "@/lib/data-store";
-
-// ── Token verification ──────────────────────────────────────
-function verifyToken(request: NextRequest): boolean {
-  const token = request.headers.get("x-admin-token");
-  if (!token) return false;
-  try {
-    const decoded = Buffer.from(token, "base64url").toString("utf-8");
-    const password = decoded.split(":")[0];
-    const adminPassword = process.env.ADMIN_PASSWORD || "Rilanguma18";
-    return password === adminPassword;
-  } catch {
-    return false;
-  }
-}
+import { verifyToken } from "@/lib/auth";
 
 // ── GET /api/jobs ───────────────────────────────────────────
 export async function GET(request: NextRequest) {

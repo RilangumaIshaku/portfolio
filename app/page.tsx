@@ -7,6 +7,7 @@ import { Process } from "@/components/process";
 import { Testimonials } from "@/components/testimonials";
 import { Pricing } from "@/components/pricing";
 import { FAQ } from "@/components/faq";
+import { Advantages } from "@/components/advantages";
 import { Contact } from "@/components/contact";
 import { Footer } from "@/components/footer";
 import { getSiteContentAsync } from "@/lib/siteContent";
@@ -22,16 +23,19 @@ interface AvailabilityData {
 }
 
 export default async function Home() {
-  const [content, availability, processData, testimonialsData] = await Promise.all([
-    getSiteContentAsync(),
-    readData<AvailabilityData>("availability", {
-      isAvailable: true,
-      status: "Available for new projects",
-      color: "green",
-    }),
-    readData<any[]>("process", []),
-    readData<any[]>("testimonials", []),
-  ]);
+  const [content, availability, processData, testimonialsData, pricingData, advantagesData] =
+    await Promise.all([
+      getSiteContentAsync(),
+      readData<AvailabilityData>("availability", {
+        isAvailable: true,
+        status: "Available for new projects",
+        color: "green",
+      }),
+      readData<any[]>("process", []),
+      readData<any[]>("testimonials", []),
+      readData<any[]>("pricing", []),
+      readData<any[]>("advantages", []),
+    ]);
 
   return (
     <>
@@ -41,9 +45,10 @@ export default async function Home() {
         <TrustStrip />
         <Services />
         <Projects images={content.images.projects} />
+        <Advantages initialData={advantagesData} />
         <Process initialData={processData} />
         <Testimonials initialData={testimonialsData} />
-        <Pricing />
+        <Pricing initialData={pricingData} />
         <FAQ />
         <Contact site={content.site} links={content.links} />
       </main>

@@ -33,7 +33,7 @@ export default function Image() {
             marginBottom: 24,
           }}
         >
-          YOUR_NAME_HERE
+          Rilan
         </div>
         <div
           style={{

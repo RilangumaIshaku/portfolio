@@ -78,9 +78,25 @@ export function Contact({ site, links }: { site: SiteData; links: LinksData }) {
 
     setStatus("loading");
 
-    // TODO: Connect your preferred email provider
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setStatus("success");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        console.error("Contact form error:", data);
+        setStatus("error");
+        return;
+      }
+
+      setStatus("success");
+    } catch (err) {
+      console.error("Contact form submission failed:", err);
+      setStatus("error");
+    }
   };
 
   const handleChange = (

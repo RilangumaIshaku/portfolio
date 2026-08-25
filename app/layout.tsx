@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { getSiteContent } from "@/lib/siteContent";
+import { JsonLd } from "@/components/json-ld";
 
 export function generateMetadata(): Metadata {
   const content = getSiteContent();
@@ -61,7 +62,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <JsonLd />
+        {children}
+      </body>
     </html>
   );
 }

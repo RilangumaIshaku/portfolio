@@ -12,19 +12,19 @@ export default function Icon() {
       <div
         style={{
           fontSize: 24,
-          background: "#2563eb",
+          background: "#1a1a1c",
           width: "100%",
           height: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "white",
+          color: "#9B8FBC",
           borderRadius: "8px",
           fontFamily: "system-ui, sans-serif",
           fontWeight: 700,
         }}
       >
-        Y
+        R
       </div>
     ),
     {

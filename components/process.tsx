@@ -14,77 +14,61 @@ const stepGradients = [
   "linear-gradient(135deg, #f5efed 0%, #ede4e1 50%, #f6f1ef 100%)",   // visible coral — Launch
 ];
 
+// Accent tints per step — visible colored glow behind the alien icon
+const stepTints = [
+  "rgba(196, 166, 107, 0.15)", // amber — Discovery
+  "rgba(113, 135, 196, 0.15)", // blue — Strategy
+  "rgba(155, 143, 188, 0.15)", // lilac — Design
+  "rgba(143, 165, 141, 0.15)", // sage — Development
+  "rgba(196, 166, 107, 0.15)", // amber — Testing
+  "rgba(201, 139, 124, 0.15)", // coral — Launch
+];
+
+const stepAccentColors = [
+  "#C4A66B", // amber
+  "#7187C4", // blue
+  "#9B8FBC", // lilac
+  "#8FA58D", // sage
+  "#C4A66B", // amber
+  "#C98B7C", // coral
+];
+
+function AlienIcon({ index }: { index: number }) {
+  const tint = stepTints[index] || stepTints[0];
+  const accentColor = stepAccentColors[index] || stepAccentColors[0];
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      {/* Ambient glow */}
+      <div
+        className="absolute w-40 h-40 rounded-full blur-3xl"
+        style={{ background: tint }}
+      />
+      {/* Icon container */}
+      <div className="relative">
+        <img
+          src="/alien.svg"
+          alt=""
+          className="w-20 h-20 md:w-24 md:h-24 drop-shadow-sm"
+          style={{ filter: `drop-shadow(0 2px 8px ${tint})` }}
+        />
+        {/* Subtle accent ring */}
+        <div
+          className="absolute inset-0 rounded-full border-2 opacity-20 -m-3"
+          style={{ borderColor: accentColor }}
+        />
+      </div>
+    </div>
+  );
+}
+
 const stepVisuals = [
-  {
-    elements: (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="flex gap-3">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="rounded-lg border border-primary/[0.06] bg-white/70" style={{ width: 48 + i * 12, height: 56 + i * 8, opacity: 0.6 + i * 0.1 }} />
-          ))}
-        </div>
-      </div>
-    ),
-  },
-  {
-    elements: (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-20 h-6 rounded-md border border-primary/[0.08] bg-white/60" />
-          <div className="w-px h-4 bg-primary/[0.1]" />
-          <div className="flex gap-2">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="w-14 h-10 rounded-md border border-primary/[0.08] bg-white/60" />
-            ))}
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    elements: (
-      <div className="absolute inset-0 p-8 flex flex-col gap-3">
-        <div className="h-8 w-full rounded-lg border border-primary/[0.06] bg-white/50" />
-        <div className="flex gap-3 flex-1">
-          <div className="w-1/3 rounded-lg border border-primary/[0.06] bg-white/50" />
-          <div className="flex-1 flex flex-col gap-3">
-            <div className="flex-1 rounded-lg border border-primary/[0.06] bg-white/50" />
-            <div className="flex-1 rounded-lg border border-primary/[0.06] bg-white/50" />
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    elements: (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative">
-          <div className="w-48 h-32 rounded-xl border border-primary/[0.08] bg-white/70 shadow-sm" />
-          <div className="absolute -bottom-3 -right-3 w-24 h-16 rounded-lg border border-primary/[0.06] bg-white/60 shadow-sm" />
-        </div>
-      </div>
-    ),
-  },
-  {
-    elements: (
-      <div className="absolute inset-0 p-8 flex flex-col gap-2 justify-center">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex gap-2 items-center">
-            <div className="h-2.5 rounded-full bg-primary/[0.06]" style={{ width: 30 + i * 12 + "%" }} />
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    elements: (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-16 h-16 rounded-2xl border-2 border-primary/[0.1] bg-white/60 flex items-center justify-center">
-          <div className="w-0 h-0 border-l-[10px] border-l-primary/20 border-y-[8px] border-y-transparent ml-1" />
-        </div>
-      </div>
-    ),
-  },
+  { elements: <AlienIcon index={0} /> },
+  { elements: <AlienIcon index={1} /> },
+  { elements: <AlienIcon index={2} /> },
+  { elements: <AlienIcon index={3} /> },
+  { elements: <AlienIcon index={4} /> },
+  { elements: <AlienIcon index={5} /> },
 ];
 
 export function Process({ initialData }: { initialData?: any[] } = {}) {
@@ -126,8 +110,9 @@ function ProcessCard({ step, index }: { step: any; index: number }) {
       )}
       style={{ transitionDelay: `${index * 60}ms` }}
     >
-      {/* Visual area — show uploaded image if available, else CSS gradient */}
-      <div className="relative aspect-[16/6] overflow-hidden" style={{ background: gradient }}>
+      {/* Visual area — show uploaded image if available, else gradient + alien icon */}
+      {/* Height increased ~20%: was aspect-[16/6], now aspect-[16/7.2] */}
+      <div className="relative aspect-[16/7.2] overflow-hidden" style={{ background: gradient }}>
         {step.image ? (
           <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
         ) : (

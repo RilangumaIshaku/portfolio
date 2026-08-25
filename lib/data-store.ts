@@ -1,43 +1,92 @@
 /**
  * Data Store Abstraction
  *
- * Priority for WRITES:
- *   1. GitHub API  (GITHUB_TOKEN + GITHUB_REPO set) → commits JSON to your repo → Vercel auto-redeploys
- *   2. Upstash Redis (UPSTASH_REDIS_REST_URL set)   → writes to KV store
- *   3. Filesystem                                    → local dev only
+ * Storage priority for WRITES:
+ *   1. GitHub API  (GITHUB_TOKEN + GITHUB_REPO) → commits JSON to repo → Vercel auto-redeploys
+ *   2. Upstash Redis (KV_REST_API_URL + KV_REST_API_TOKEN) → writes to KV store
+ *   3. Filesystem → local dev only (fails silently on Vercel)
  *
- * Priority for READS:
- *   1. In-memory cache (populated on every write — gives instant feedback in admin UI)
+ * Storage priority for READS:
+ *   1. In-memory cache (populated on every write — instant feedback in admin UI)
  *   2. Upstash Redis (if configured)
  *   3. Filesystem (the JSON files bundled at build time)
+ *
+ * ⚠️  On Vercel, you MUST configure either:
+ *     - GITHUB_TOKEN + GITHUB_REPO (recommended — changes commit to repo, trigger redeploy)
+ *     - KV_REST_API_URL + KV_REST_API_TOKEN (Upstash Redis — instant persistence)
+ *     Without one of these, admin changes will NOT persist between requests.
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import path from "path";
-import { Redis } from "@upstash/redis";
 
-// ── In-memory cache (reflects writes immediately within a warm serverless instance) ──
+// ── In-memory cache (reflects writes immediately within a warm instance) ──
 const memStore: Record<string, unknown> = {};
 
-// ── Redis client (lazy-initialized) ────────────────────────
+// ── Redis client (lazy-loaded to avoid bundling @upstash/redis when unused) ──
 let redisClient: any = null;
+let redisLoadAttempted = false;
 
-function getRedis() {
+async function getRedis() {
   if (redisClient) return redisClient;
+  if (redisLoadAttempted) return null;
+
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
+  const token =
+    process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) {
+    redisLoadAttempted = true;
+    return null;
+  }
+
   try {
+    const { Redis } = await import("@upstash/redis");
     redisClient = new Redis({ url, token });
     return redisClient;
   } catch (err) {
-    console.error("Failed to initialize Redis client:", err);
+    console.error("[DataStore] Failed to initialize Redis client:", err);
+    redisLoadAttempted = true;
     return null;
   }
 }
 
-export const USE_KV = !!(process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL);
-export const USE_GITHUB = !!(process.env.GITHUB_TOKEN && process.env.GITHUB_REPO);
+export const USE_KV = !!(
+  process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
+);
+export const USE_GITHUB = !!(
+  process.env.GITHUB_TOKEN && process.env.GITHUB_REPO
+);
+
+/**
+ * Returns a human-readable description of the active storage backend.
+ */
+export function getStorageInfo(): {
+  backend: string;
+  writable: boolean;
+  message: string;
+} {
+  if (USE_GITHUB) {
+    return {
+      backend: "GitHub API",
+      writable: true,
+      message: `Writing to ${process.env.GITHUB_REPO} → Vercel auto-redeploys`,
+    };
+  }
+  if (USE_KV) {
+    return {
+      backend: "Upstash Redis/KV",
+      writable: true,
+      message: "Persisting to Redis — changes are instant",
+    };
+  }
+  // Filesystem — only works locally
+  return {
+    backend: "Filesystem",
+    writable: false,
+    message:
+      "⚠️  No persistent storage configured. Admin changes will NOT survive redeployments. Add GITHUB_TOKEN + GITHUB_REPO or KV_REST_API_URL + KV_REST_API_TOKEN to your Vercel env vars.",
+  };
+}
 
 // ── KV key prefix ──────────────────────────────────────────
 const KEY_PREFIX = "portfolio:";
@@ -46,31 +95,31 @@ const KEY_PREFIX = "portfolio:";
 const DATA_DIR = path.join(process.cwd(), "data");
 
 const SECTION_FILES: Record<string, string> = {
-  services:     path.join(DATA_DIR, "services.json"),
-  faq:          path.join(DATA_DIR, "faq.json"),
-  projects:     path.join(DATA_DIR, "projects.json"),
+  services: path.join(DATA_DIR, "services.json"),
+  faq: path.join(DATA_DIR, "faq.json"),
+  projects: path.join(DATA_DIR, "projects.json"),
   testimonials: path.join(DATA_DIR, "testimonials.json"),
-  pricing:      path.join(DATA_DIR, "pricing.json"),
-  process:      path.join(DATA_DIR, "process.json"),
-  advantages:   path.join(DATA_DIR, "advantages.json"),
-  jobs:         path.join(DATA_DIR, "jobs.json"),
+  pricing: path.join(DATA_DIR, "pricing.json"),
+  process: path.join(DATA_DIR, "process.json"),
+  advantages: path.join(DATA_DIR, "advantages.json"),
+  jobs: path.join(DATA_DIR, "jobs.json"),
 };
 
 const AVAILABILITY_PATH = path.join(DATA_DIR, "availability.json");
-const CONTENT_PATH      = path.join(DATA_DIR, "site-content.json");
+const CONTENT_PATH = path.join(DATA_DIR, "site-content.json");
 
 // ── GitHub repo file paths (relative to repo root) ─────────
 const GITHUB_FILE_PATHS: Record<string, string> = {
-  services:     "data/services.json",
-  faq:          "data/faq.json",
-  projects:     "data/projects.json",
+  services: "data/services.json",
+  faq: "data/faq.json",
+  projects: "data/projects.json",
   testimonials: "data/testimonials.json",
-  pricing:      "data/pricing.json",
-  process:      "data/process.json",
-  advantages:   "data/advantages.json",
-  jobs:         "data/jobs.json",
+  pricing: "data/pricing.json",
+  process: "data/process.json",
+  advantages: "data/advantages.json",
+  jobs: "data/jobs.json",
   availability: "data/availability.json",
-  content:      "data/site-content.json",
+  content: "data/site-content.json",
 };
 
 export const SECTION_KEYS = Object.keys(SECTION_FILES);
@@ -96,24 +145,25 @@ function writeFsJson(filePath: string, data: unknown) {
 
 // ── KV helpers ─────────────────────────────────────────────
 async function kvGet<T>(key: string): Promise<T | null> {
-  const redis = getRedis();
+  const redis = await getRedis();
   if (!redis) return null;
   try {
     const raw = await redis.get(`${KEY_PREFIX}${key}`);
     if (raw === null || raw === undefined) return null;
     return typeof raw === "string" ? JSON.parse(raw) : raw;
-  } catch {
+  } catch (err) {
+    console.error(`[DataStore] KV get failed for ${key}:`, err);
     return null;
   }
 }
 
 async function kvSet(key: string, value: unknown): Promise<void> {
-  const redis = getRedis();
+  const redis = await getRedis();
   if (!redis) return;
   try {
     await redis.set(`${KEY_PREFIX}${key}`, JSON.stringify(value));
   } catch (err) {
-    console.error(`KV set failed for ${key}:`, err);
+    console.error(`[DataStore] KV set failed for ${key}:`, err);
   }
 }
 
@@ -122,8 +172,8 @@ async function githubWriteFile(
   section: string,
   data: unknown
 ): Promise<{ ok: boolean; reason?: string }> {
-  const token  = process.env.GITHUB_TOKEN;
-  const repo   = process.env.GITHUB_REPO; // e.g. "RilangumaIshaku/portfolio"
+  const token = process.env.GITHUB_TOKEN;
+  const repo = process.env.GITHUB_REPO;
   const branch = process.env.GITHUB_BRANCH || "main";
   const filePath = GITHUB_FILE_PATHS[section];
 
@@ -131,15 +181,17 @@ async function githubWriteFile(
     return { ok: false, reason: "GITHUB_TOKEN or GITHUB_REPO not set" };
   }
 
-  // Non-file sections (bot_status, bot_enabled) — memStore only, no commit needed
+  // Non-file sections (bot_status, bot_enabled) — memStore only
   if (!filePath) return { ok: true };
 
-  const contentBase64 = Buffer.from(JSON.stringify(data, null, 2)).toString("base64");
+  const contentBase64 = Buffer.from(
+    JSON.stringify(data, null, 2)
+  ).toString("base64");
   const apiUrl = `https://api.github.com/repos/${repo}/contents/${filePath}`;
   const headers: Record<string, string> = {
-    Authorization:        `Bearer ${token}`,
-    Accept:               "application/vnd.github+json",
-    "Content-Type":       "application/json",
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "Content-Type": "application/json",
     "X-GitHub-Api-Version": "2022-11-28",
   };
 
@@ -151,7 +203,9 @@ async function githubWriteFile(
       const fileData: any = await getRes.json();
       sha = fileData.sha;
     }
-  } catch { /* file may not exist yet */ }
+  } catch {
+    /* file may not exist yet */
+  }
 
   // Commit the updated file
   const body: Record<string, unknown> = {
@@ -169,19 +223,25 @@ async function githubWriteFile(
     });
 
     if (!putRes.ok) {
-      const err: any = await putRes.json();
-      console.error("GitHub API write error:", err);
-      return { ok: false, reason: `GitHub API error: ${err.message}` };
+      const err: any = await putRes.json().catch(() => ({}));
+      console.error("[DataStore] GitHub API write error:", err);
+      return {
+        ok: false,
+        reason: `GitHub API error: ${err.message || putRes.statusText}`,
+      };
     }
     return { ok: true };
   } catch (err) {
-    return { ok: false, reason: `GitHub request failed: ${String(err)}` };
+    return {
+      ok: false,
+      reason: `GitHub request failed: ${String(err)}`,
+    };
   }
 }
 
 function resolveFilePath(section: string): string | null {
   if (section === "availability") return AVAILABILITY_PATH;
-  if (section === "content")      return CONTENT_PATH;
+  if (section === "content") return CONTENT_PATH;
   return SECTION_FILES[section] || null;
 }
 
@@ -245,12 +305,12 @@ export async function writeData<T>(
       await kvSet(section, data);
       return { ok: true };
     } catch (err) {
-      console.error(`KV write failed for ${section}:`, err);
+      console.error(`[DataStore] KV write failed for ${section}:`, err);
       return { ok: false, reason: "Redis write failed" };
     }
   }
 
-  // 3. Local filesystem (dev only)
+  // 3. Local filesystem (dev only — fails on Vercel)
   const filePath = resolveFilePath(section);
   if (filePath) {
     try {
@@ -264,7 +324,7 @@ export async function writeData<T>(
   return {
     ok: false,
     reason:
-      "No storage configured. Add GITHUB_TOKEN + GITHUB_REPO to your Vercel environment variables.",
+      "No persistent storage configured. Add GITHUB_TOKEN + GITHUB_REPO or KV_REST_API_URL + KV_REST_API_TOKEN to your Vercel environment variables.",
   };
 }
 

@@ -21,10 +21,10 @@ const iconMap: Record<string, LucideIcon> = {
   Sparkles,
 };
 
-export function Advantages() {
+export function Advantages({ initialData }: { initialData?: any[] } = {}) {
   const { ref, isInView } = useInView();
   const { data } = useContentData();
-  const advantages = data.advantages;
+  const advantages = initialData && initialData.length > 0 ? initialData : data.advantages;
 
   if (advantages.length === 0) return null;
 

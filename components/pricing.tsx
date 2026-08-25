@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/lib/useCurrency";
 import { Check, ArrowUpRight } from "lucide-react";
 
-export function Pricing() {
+export function Pricing({ initialData }: { initialData?: any[] } = {}) {
   const { ref, isInView } = useInView();
   const { formatPrice } = useCurrency();
   const { data } = useContentData();
-  const pricingTiers = data.pricing;
+  const pricingTiers = initialData && initialData.length > 0 ? initialData : data.pricing;
 
   if (pricingTiers.length === 0) return null;
 

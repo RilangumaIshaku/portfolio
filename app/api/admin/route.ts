@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { readData, writeData, SECTION_KEYS, USE_KV } from "@/lib/data-store";
-
-// ── File paths for uploads (local dev only) ────────────────
-import path from "path";
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
-
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
-
-function ensureDir(dir: string) {
-  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-}
+import { readData, writeData, SECTION_KEYS, USE_KV, getStorageInfo } from "@/lib/data-store";
+import { createToken, verifyToken } from "@/lib/auth";
+import { uploadImage } from "@/lib/image-upload";
 
 // ── Interfaces ─────────────────────────────────────────────
 interface AvailabilityData {
@@ -45,21 +37,21 @@ interface SiteContent {
 
 const defaultContent: SiteContent = {
   site: {
-    name: "YOUR_NAME_HERE",
-    brand: "YOUR_NAME_HERE",
+    name: "Rilan",
+    brand: "Rilan",
     tagline: "Freelance Web Developer",
     description:
       "I design and develop fast, modern, responsive websites for businesses and startups.",
-    email: "YOUR_EMAIL_HERE",
-    whatsapp: "YOUR_WHATSAPP_NUMBER_HERE",
+    email: "davidishaku560@gmail.com",
+    whatsapp: "+2347051565727",
     socials: {
-      github: "https://github.com/YOUR_GITHUB_USERNAME",
-      linkedin: "https://linkedin.com/in/YOUR_LINKEDIN_USERNAME",
-      twitter: "https://twitter.com/YOUR_TWITTER_USERNAME",
+      github: "https://github.com/RilangumaIshaku",
+      linkedin: "https://linkedin.com/in/Rilanguma",
+      twitter: "https://twitter.com/rilanguma"
     },
   },
   seo: {
-    title: "YOUR_NAME_HERE — Freelance Web Developer",
+    title: "Rilan — Freelance Web Developer",
     description: "Freelance web developer crafting modern, responsive websites.",
     ogImage: "/images/og-image.png",
   },
@@ -78,28 +70,6 @@ const defaultContent: SiteContent = {
     ctaTarget: "#contact",
   },
 };
-
-// ── Token helpers ──────────────────────────────────────────
-function createToken(password: string): string {
-  return Buffer.from(`${password}:${Date.now()}`).toString("base64url");
-}
-
-function verifyTokenFromRequest(request: NextRequest): boolean {
-  const token = request.headers.get("x-admin-token");
-  if (!token) return false;
-  try {
-    const decoded = Buffer.from(token, "base64url").toString("utf-8");
-    const password = decoded.split(":")[0];
-    const adminPassword = process.env.ADMIN_PASSWORD || "Rilanguma18";
-    return password === adminPassword;
-  } catch {
-    return false;
-  }
-}
-
-function verifyToken(request: NextRequest): boolean {
-  return verifyTokenFromRequest(request);
-}
 
 // ── Helper: invalidate homepage ISR cache ──────────────────
 function bustCache() {
@@ -127,19 +97,21 @@ export async function POST(request: NextRequest) {
       const ext = file.name.split(".").pop() || "jpg";
       const safeName = key.replace(/[^a-zA-Z0-9_-]/g, "_");
       const fileName = `${safeName}-${Date.now()}.${ext}`;
-      const url = `/uploads/${fileName}`;
 
-      // Try to save file to disk (works locally, fails silently on Vercel)
+      let url: string;
       try {
-        ensureDir(UPLOAD_DIR);
-        const bytes = await file.arrayBuffer();
-        const filePath = path.join(UPLOAD_DIR, fileName);
-        writeFileSync(filePath, Buffer.from(bytes));
-      } catch {
-        // On Vercel, filesystem is read-only. The URL is still stored in data.
+        const result = await uploadImage(file, fileName);
+        url = result.url;
+        console.log(`[Admin] Image uploaded via ${result.provider}: ${url}`);
+      } catch (err) {
+        console.error("[Admin] Image upload failed:", err);
+        return NextResponse.json(
+          { error: `Image upload failed: ${String(err)}` },
+          { status: 500 }
+        );
       }
 
-      // Update content in KV regardless of file save
+      // Update content in KV/data store regardless of upload method
       if (key === "profile" || key.startsWith("project-")) {
         const content = await readData<SiteContent>("content", defaultContent);
         if (key === "profile") {
@@ -151,7 +123,7 @@ export async function POST(request: NextRequest) {
         const result = await writeData("content", content);
         if (!result.ok) {
           return NextResponse.json(
-            { error: `Save failed: ${result.reason}. Data will not persist. Please configure Vercel KV (Redis).` },
+            { error: `Image URL saved but data won't persist: ${result.reason}` },
             { status: 500 }
           );
         }
@@ -171,12 +143,12 @@ export async function POST(request: NextRequest) {
       if (!password) {
         return NextResponse.json({ error: "Password required" }, { status: 400 });
       }
-      const adminPassword = process.env.ADMIN_PASSWORD || "Rilanguma18";
-      if (password !== adminPassword) {
+      try {
+        const token = createToken(password);
+        return NextResponse.json({ success: true, token });
+      } catch {
         return NextResponse.json({ error: "Wrong password" }, { status: 401 });
       }
-      const token = createToken(password);
-      return NextResponse.json({ success: true, token });
     }
 
     // All actions after login require auth
