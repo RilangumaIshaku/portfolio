@@ -1,39 +1,63 @@
-import sqlite3
-from pathlib import Path
+import os
+import requests
+import json
 
-# Store DB inside the job-bot scripts folder
-DB_PATH = Path(__file__).resolve().parent / "jobs.db"
+UPSTASH_URL = os.getenv("UPSTASH_REDIS_REST_URL")
+UPSTASH_TOKEN = os.getenv("UPSTASH_REDIS_REST_TOKEN")
 
+def _redis_req(command, *args):
+    if not UPSTASH_URL or not UPSTASH_TOKEN:
+        return None
+    url = UPSTASH_URL.rstrip('/')
+    try:
+        # Use POST to the root endpoint with the command array
+        payload = [command] + list(args)
+        resp = requests.post(url, headers={"Authorization": f"Bearer {UPSTASH_TOKEN}"}, json=payload)
+        return resp.json().get("result")
+    except Exception as e:
+        print(f"Redis request failed: {e}")
+        return None
 
 def init_db():
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS seen_jobs (
-            job_id TEXT PRIMARY KEY,
-            source TEXT,
-            title TEXT,
-            company TEXT,
-            url TEXT,
-            seen_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.commit()
-    conn.close()
-
+    if not UPSTASH_URL:
+        print("[WARNING] UPSTASH_REDIS_REST_URL not set. Redis calls will fail.")
 
 def is_seen(job_id: str) -> bool:
-    conn = sqlite3.connect(str(DB_PATH))
-    cur = conn.execute("SELECT 1 FROM seen_jobs WHERE job_id = ?", (job_id,))
-    result = cur.fetchone() is not None
-    conn.close()
-    return result
-
+    res = _redis_req("SISMEMBER", "portfolio:seen_jobs", job_id)
+    return res == 1
 
 def mark_seen(job_id: str, source: str, title: str, company: str, url: str):
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.execute(
-        "INSERT OR IGNORE INTO seen_jobs (job_id, source, title, company, url) VALUES (?, ?, ?, ?, ?)",
-        (job_id, source, title, company, url),
-    )
-    conn.commit()
-    conn.close()
+    _redis_req("SADD", "portfolio:seen_jobs", job_id)
+
+def get_portfolio_jobs():
+    res = _redis_req("GET", "portfolio:jobs")
+    if not res:
+        return []
+    try:
+        if isinstance(res, str):
+            return json.loads(res)
+        return res
+    except Exception:
+        return []
+
+def set_portfolio_jobs(jobs_list):
+    _redis_req("SET", "portfolio:jobs", json.dumps(jobs_list))
+
+def set_bot_status(status_str, logs_list, last_scan_result=None):
+    status_obj = {
+        "status": status_str,
+        "logs": logs_list[-20:], # keep last 20 logs
+        "lastScanResult": last_scan_result
+    }
+    _redis_req("SET", "portfolio:bot_status", json.dumps(status_obj))
+
+def is_bot_enabled() -> bool:
+    res = _redis_req("GET", "portfolio:bot_enabled")
+    if not res:
+        return False
+    try:
+        if isinstance(res, str):
+            return json.loads(res)
+        return bool(res)
+    except Exception:
+        return False
