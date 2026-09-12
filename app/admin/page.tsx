@@ -15,10 +15,8 @@ import {
   Link,
   Briefcase,
   MessageSquare,
-  DollarSign,
   HelpCircle,
   Layers,
-  Sparkles,
   FolderOpen,
   Menu,
 } from "lucide-react";
@@ -32,7 +30,6 @@ import { ServicesSection } from "@/components/admin/services-section";
 import { ProjectsSection } from "@/components/admin/projects-section";
 import { ProcessSection } from "@/components/admin/process-section";
 import { TestimonialsSection } from "@/components/admin/testimonials-section";
-import { PricingSection } from "@/components/admin/pricing-section";
 import { FaqSection } from "@/components/admin/faq-section";
 import { SiteSection } from "@/components/admin/site-section";
 import { ImagesSection } from "@/components/admin/images-section";
@@ -46,7 +43,6 @@ type Section =
   | "projects"
   | "process"
   | "testimonials"
-  | "pricing"
   | "faq"
   | "site"
   | "images"
@@ -72,7 +68,6 @@ const NAV_ITEMS: NavItem[] = [
     icon: MessageSquare,
     group: "Content",
   },
-  { id: "pricing", label: "Pricing", icon: DollarSign, group: "Content" },
   { id: "faq", label: "FAQ", icon: HelpCircle, group: "Content" },
   { id: "site", label: "Site Info", icon: Globe, group: "Settings" },
   { id: "images", label: "Images", icon: ImageIcon, group: "Settings" },
@@ -89,7 +84,7 @@ const defaultContent: SiteContent = {
     description:
       "I design and develop fast, modern, responsive websites for businesses and startups.",
     email: "davidishaku560@gmail.com",
-    whatsapp: "+2347051565727",
+    telegram: "https://t.me/rilanguma",
     socials: {
       github: "https://github.com/RilangumaIshaku",
       linkedin: "https://linkedin.com/in/Rilanguma",
@@ -114,8 +109,6 @@ const defaultContent: SiteContent = {
   },
   images: { profile: "", projects: {} },
   links: {
-    whatsappMessage:
-      "Hi! I'm interested in working with you on a project.",
     ctaTarget: "#contact",
   },
 };
@@ -143,7 +136,6 @@ export default function AdminPage() {
   const [services, setServices] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
-  const [pricing, setPricing] = useState<any[]>([]);
   const [faqs, setFaqs] = useState<any[]>([]);
   const [processSteps, setProcessSteps] = useState<any[]>([]);
   const [advantages, setAdvantages] = useState<any[]>([]);
@@ -181,7 +173,6 @@ export default function AdminPage() {
         if (d.services) setServices(d.services);
         if (d.projects) setProjects(d.projects);
         if (d.testimonials) setTestimonials(d.testimonials);
-        if (d.pricing) setPricing(d.pricing);
         if (d.faq) setFaqs(d.faq);
         if (d.process) setProcessSteps(d.process);
         if (d.advantages) setAdvantages(d.advantages);
@@ -609,13 +600,6 @@ export default function AdminPage() {
                   onSave={(d) => saveSectionData("testimonials", d)}
                   loading={loading}
                   token={token!}
-                />
-              )}
-              {activeSection === "pricing" && (
-                <PricingSection
-                  data={pricing}
-                  onSave={(d) => saveSectionData("pricing", d)}
-                  loading={loading}
                 />
               )}
               {activeSection === "faq" && (

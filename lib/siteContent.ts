@@ -10,7 +10,7 @@ export interface SiteContent {
     tagline: string;
     description: string;
     email: string;
-    whatsapp: string;
+    telegram: string;
     socials: {
       github: string;
       linkedin: string;
@@ -35,7 +35,6 @@ export interface SiteContent {
     projects: Record<string, string>;
   };
   links: {
-    whatsappMessage: string;
     ctaTarget: string;
   };
 }
@@ -49,7 +48,7 @@ export const defaults: SiteContent = {
     tagline: siteConfig.tagline,
     description: siteConfig.description,
     email: siteConfig.email,
-    whatsapp: siteConfig.whatsapp,
+    telegram: siteConfig.telegram,
     socials: { ...siteConfig.socials },
   },
   seo: {
@@ -58,11 +57,11 @@ export const defaults: SiteContent = {
     ogImage: siteConfig.seo.ogImage,
   },
   hero: {
-    headline: "Hey, I'm Rilan. I design premium & high-converting experiences.",
+    headline: "Digital experiences built for ambitious businesses.",
     subtitle:
-      "Designing and developing fast, modern, responsive websites for businesses and startups that want to stand out and convert.",
-    ctaPrimary: "Start a Project",
-    ctaSecondary: "View My Work",
+      "I design and develop premium websites that turn attention into trust, credibility and business.",
+    ctaPrimary: "Start a project",
+    ctaSecondary: "View selected work",
     ctaPrimaryTarget: "#contact",
     ctaSecondaryTarget: "#work",
   },
@@ -77,7 +76,6 @@ export const defaults: SiteContent = {
     },
   },
   links: {
-    whatsappMessage: "Hi! I'm interested in working with you on a project.",
     ctaTarget: "#contact",
   },
 };

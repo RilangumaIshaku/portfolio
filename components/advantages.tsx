@@ -32,9 +32,9 @@ export function Advantages({ initialData }: { initialData?: any[] } = {}) {
     <section className="section-spacing bg-surface">
       <div className="section-container section-padding">
         <SectionHeading
-          label="Why Me"
-          title="Why work with me"
-          description="I'm not a design agency or a dev shop. I'm one person who cares about your project and delivers quality."
+          label="Standard"
+          title="A higher standard of digital execution"
+          description="A disciplined, direct approach that bridges thoughtful interface design and production-grade web engineering."
         />
 
         <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">

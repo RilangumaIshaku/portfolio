@@ -99,16 +99,25 @@ export function Hero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
         >
-          {hero.headline.split("premium").map((part, i, arr) =>
-            i < arr.length - 1 ? (
-              <span key={i}>
-                {part}
+          {(() => {
+            const highlightWord = hero.headline.includes("ambitious")
+              ? "ambitious"
+              : hero.headline.includes("premium")
+              ? "premium"
+              : null;
+
+            if (!highlightWord) return hero.headline;
+
+            const parts = hero.headline.split(highlightWord);
+            return (
+              <>
+                {parts[0]}
                 <span className="relative inline-block">
                   <span
                     className="relative z-10"
                     style={{ color: "var(--accent-lilac)" }}
                   >
-                    premium
+                    {highlightWord}
                   </span>
                   <span
                     className="absolute bottom-1 left-0 right-0 h-[2px] rounded-full"
@@ -119,11 +128,10 @@ export function Hero({
                     }}
                   />
                 </span>
-              </span>
-            ) : (
-              part
-            )
-          )}
+                {parts.slice(1).join(highlightWord)}
+              </>
+            );
+          })()}
         </motion.h1>
 
         {/* Subtitle */}

@@ -45,8 +45,8 @@ export function Services() {
       <div className="section-container section-padding">
         <SectionHeading
           label="Services"
-          title="Design services I provide"
-          description="From focused landing pages to complete digital experiences, I design and build websites that are clear, modern and built to perform."
+          title="Capabilities &amp; Services"
+          description="From strategic positioning to custom web development, I build digital experiences engineered for clarity, speed, and real-world business results."
         />
 
         <StaggerContainer

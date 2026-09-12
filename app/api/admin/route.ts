@@ -19,7 +19,7 @@ interface SiteContent {
     tagline: string;
     description: string;
     email: string;
-    whatsapp: string;
+    telegram: string;
     socials: { github: string; linkedin: string; twitter: string };
   };
   seo: { title: string; description: string; ogImage: string };
@@ -32,7 +32,7 @@ interface SiteContent {
     ctaSecondaryTarget: string;
   };
   images: { profile: string; projects: Record<string, string> };
-  links: { whatsappMessage: string; ctaTarget: string };
+  links: { ctaTarget: string };
 }
 
 const defaultContent: SiteContent = {
@@ -43,7 +43,7 @@ const defaultContent: SiteContent = {
     description:
       "I design and develop fast, modern, responsive websites for businesses and startups.",
     email: "davidishaku560@gmail.com",
-    whatsapp: "+2347051565727",
+    telegram: "https://t.me/rilanguma",
     socials: {
       github: "https://github.com/RilangumaIshaku",
       linkedin: "https://linkedin.com/in/Rilanguma",
@@ -66,7 +66,6 @@ const defaultContent: SiteContent = {
   },
   images: { profile: "", projects: {} },
   links: {
-    whatsappMessage: "Hi! I'm interested in working with you on a project.",
     ctaTarget: "#contact",
   },
 };

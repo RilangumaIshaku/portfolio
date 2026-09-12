@@ -1,23 +1,25 @@
 export const siteConfig = {
   name: "Rilan",
   brand: "Rilan",
-  tagline: "Freelance Web Developer",
+  tagline: "Premium Web Design & Development",
   description:
-    "I design and develop fast, modern, responsive websites for businesses and startups.",
+    "I design and build premium digital experiences for ambitious businesses. Strategy, design, and modern web development from concept to launch.",
 
   email: "davidishaku560@gmail.com",
-  whatsapp: "+2347051565727",
+
+  // Username-based Telegram — never expose a phone number publicly.
+  telegram: "https://t.me/rilanguma",
 
   socials: {
     github: "https://github.com/RilangumaIshaku",
     linkedin: "https://linkedin.com/in/Rilanguma",
-    twitter: "https://twitter.com/rilanguma"
+    twitter: "https://twitter.com/rilanguma",
   },
 
   seo: {
-    title: "Rilan — Freelance Web Developer | Modern Websites for Businesses",
+    title: "Premium Web Design & Development | Rilan",
     description:
-      "Freelance web developer crafting modern, responsive websites that make businesses look credible, professional, and ready for customers.",
+      "Premium website design and development for ambitious businesses. Strategy, design and development from concept to launch.",
     ogImage: "/images/og-image.png",
   },
 } as const;

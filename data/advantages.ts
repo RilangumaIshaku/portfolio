@@ -6,33 +6,33 @@ export interface Advantage {
 
 export const advantages: Advantage[] = [
   {
-    title: "Modern by Default",
+    title: "Performance Engineered",
     description:
-      "Websites built with current technologies and design standards — no outdated templates, no legacy code.",
+      "Fast-loading, clean code built on modern web standards. Engineered for sub-second speeds, smooth rendering, and high Core Web Vitals.",
     icon: "Zap",
   },
   {
-    title: "Fast and Responsive",
+    title: "Mobile-First Precision",
     description:
-      "Optimized for mobile, desktop, and every screen size in between. Your site loads fast everywhere.",
+      "Flawless responsiveness across all viewport sizes, ensuring your digital presence feels refined on smartphones, tablets, and desktops.",
     icon: "Smartphone",
   },
   {
-    title: "Built Around Your Business",
+    title: "Business-Centered UX",
     description:
-      "Not a generic template. Every project is designed and developed specifically for your brand and goals.",
+      "Every layout, headline, and interaction is designed to turn visitor attention into trust, credibility, and commercial inquiries.",
     icon: "Target",
   },
   {
-    title: "Direct Communication",
+    title: "Direct Collaboration",
     description:
-      "You work directly with the person building your website. No account managers, no lost-in-translation moments.",
+      "You communicate directly with the designer and engineer at every milestone. Zero agency overhead, zero bureaucracy, zero lost context.",
     icon: "MessageCircle",
   },
   {
-    title: "AI-Enhanced Workflow",
+    title: "Enduring & Maintainable",
     description:
-      "Modern AI tools accelerate development while maintaining human design judgment and engineering quality.",
+      "Clean, modular code and flexible CMS integrations that give your team complete autonomy and zero platform lock-in.",
     icon: "Sparkles",
   },
 ];

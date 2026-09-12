@@ -165,6 +165,7 @@ export function Navbar({ site }: { site: SiteData }) {
           href="#contact"
           onClick={(e) => {
             e.preventDefault();
+            setIsMobileOpen(false);
             scrollToSection("#contact");
           }}
           className="btn-dark mt-4 h-12 px-8 flex items-center gap-2 rounded-full bg-[#0a0a0b] text-white text-button font-medium"

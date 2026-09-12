@@ -82,8 +82,8 @@ export function Process({ initialData }: { initialData?: any[] } = {}) {
       <div className="section-container section-padding">
         <SectionHeading
           label="Process"
-          title="How we get from idea to launch"
-          description="A clear process that takes your idea from an initial conversation to a polished, functional website."
+          title="From initial strategy to launch"
+          description="A disciplined, six-stage process designed to ensure clarity, high engineering standards, and reliable delivery."
         />
 
         <div className="flex flex-col gap-4 md:gap-5 max-w-3xl mx-auto">

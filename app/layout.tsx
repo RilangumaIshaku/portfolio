@@ -11,12 +11,14 @@ export function generateMetadata(): Metadata {
     title: content.seo.title,
     description: content.seo.description,
     keywords: [
-      "freelance web developer",
+      "premium web design",
       "web development",
-      "website design",
       "Next.js developer",
-      "responsive websites",
-      "modern web design",
+      "independent digital studio",
+      "corporate website design",
+      "UI UX design",
+      "TypeScript developer",
+      "responsive web experiences",
     ],
     authors: [{ name: content.site.name }],
     creator: content.site.name,
@@ -56,12 +58,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body>
         <JsonLd />
         {children}

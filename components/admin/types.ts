@@ -5,7 +5,7 @@ export interface SiteContent {
     tagline: string;
     description: string;
     email: string;
-    whatsapp: string;
+    telegram: string;
     socials: { github: string; linkedin: string; twitter: string };
   };
   seo: { title: string; description: string; ogImage: string };
@@ -18,7 +18,7 @@ export interface SiteContent {
     ctaSecondaryTarget: string;
   };
   images: { profile: string; projects: Record<string, string> };
-  links: { whatsappMessage: string; ctaTarget: string };
+  links: { ctaTarget: string };
 }
 
 export interface AvailabilityData {

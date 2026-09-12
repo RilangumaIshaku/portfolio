@@ -6,39 +6,39 @@ export interface Service {
 
 export const services: Service[] = [
   {
-    title: "Landing Page Design",
+    title: "Strategy & UX",
     description:
-      "High-converting, visually striking landing pages built to capture attention and drive action.",
-    icon: "Layout",
-  },
-  {
-    title: "Multi-Page Web Design",
-    description:
-      "Full website designs with consistent branding, intuitive navigation, and polished page flows.",
-    icon: "Globe",
-  },
-  {
-    title: "Application Design",
-    description:
-      "Clean, functional UI/UX design for web apps, dashboards, and complex interfaces.",
+      "Understanding your business, audience and objectives before anything is designed.",
     icon: "Layers",
   },
   {
-    title: "Framer Development",
+    title: "Web Design",
     description:
-      "Pixel-perfect websites built in Framer — fast, responsive, and easy to manage.",
-    icon: "Zap",
+      "Clear, considered interfaces designed around your brand and business goals.",
+    icon: "Layout",
   },
   {
-    title: "Logo Design",
+    title: "Web Development",
     description:
-      "Memorable, versatile logos that capture your brand identity and work across every medium.",
+      "Fast, responsive and maintainable websites built for the modern web.",
+    icon: "Globe",
+  },
+  {
+    title: "CMS & Content",
+    description:
+      "Flexible content systems that make managing your website straightforward.",
     icon: "Hexagon",
   },
   {
-    title: "Product Design",
+    title: "Performance",
     description:
-      "End-to-end product design from research and wireframes to polished, shippable interfaces.",
+      "Fast-loading experiences engineered for real-world devices and networks.",
+    icon: "Zap",
+  },
+  {
+    title: "Ongoing Support",
+    description:
+      "Maintenance, improvements and technical support beyond launch.",
     icon: "Package",
   },
 ];

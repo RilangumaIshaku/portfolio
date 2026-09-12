@@ -76,13 +76,13 @@ export function TrustStrip() {
         {/* Heading */}
         <p
           className={cn(
-            "text-center font-medium uppercase text-[10px] md:text-[11px] tracking-[0.2em] text-muted-foreground/35 mb-8 md:mb-10 transition-all duration-500",
+            "text-center font-medium uppercase text-[10px] md:text-[11px] tracking-[0.2em] text-muted-foreground/45 mb-8 md:mb-10 transition-all duration-500",
             isInView
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-3"
           )}
         >
-          Trusted by 30+ brands including
+          Selected project collaborations &amp; digital explorations
         </p>
 
         {/* Desktop: equal-width brand cells with dividers */}

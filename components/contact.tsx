@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useInView } from "@/lib/useInView";
+import { useVisitorMarket } from "@/lib/visitor-market";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
@@ -9,11 +10,7 @@ import { Send, MessageCircle, CheckCircle, AlertCircle, Loader2 } from "lucide-r
 
 interface SiteData {
   email: string;
-  whatsapp: string;
-}
-
-interface LinksData {
-  whatsappMessage: string;
+  telegram: string;
 }
 
 interface FormData {
@@ -36,16 +33,26 @@ const projectTypes = [
   "Other",
 ];
 
-const budgetRanges = [
-  "Under ₦200,000",
-  "₦200,000 – ₦500,000",
-  "₦500,000 – ₦1,000,000",
-  "₦1,000,000+",
-  "Not sure yet",
+// Budget bands follow the visitor's pricing market — same anchors as the
+// pricing section (Starter from €1,000 / ₦1,500,000, Business from €2,000 / ₦3,000,000).
+const budgetRangesINTL = [
+  "€1,000 – €2,000",
+  "€2,000 – €5,000",
+  "€5,000+",
+  "Flexible / To be discussed",
 ];
 
-export function Contact({ site, links }: { site: SiteData; links: LinksData }) {
+const budgetRangesNG = [
+  "Under ₦1,500,000",
+  "₦1,500,000 – ₦3,000,000",
+  "₦3,000,000+",
+  "Flexible / To be discussed",
+];
+
+export function Contact({ site }: { site: SiteData }) {
   const { ref, isInView } = useInView();
+  const market = useVisitorMarket();
+  const budgetRanges = market === "NG" ? budgetRangesNG : budgetRangesINTL;
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [formData, setFormData] = useState<FormData>({
@@ -119,7 +126,7 @@ export function Contact({ site, links }: { site: SiteData; links: LinksData }) {
 
   const errorInputClasses = "border-red-400/60 focus:ring-red-400/20 focus:border-red-400/40";
 
-  const whatsappUrl = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(links.whatsappMessage)}`;
+  const telegramUrl = site.telegram;
 
   return (
     <section id="contact" className="section-spacing bg-muted/30">
@@ -127,7 +134,7 @@ export function Contact({ site, links }: { site: SiteData; links: LinksData }) {
         <SectionHeading
           label="Get in Touch"
           title="Have a project in mind? Let's build it."
-          description="Fill out the form below and I'll get back to you within 24 hours. Or reach me directly on WhatsApp."
+          description="Fill out the form below and I'll get back to you within 24 hours. Or reach me directly on Telegram."
         />
 
         <div
@@ -301,10 +308,19 @@ export function Contact({ site, links }: { site: SiteData; links: LinksData }) {
                 )}
               </div>
 
+              {/* Availability */}
+              <div className="flex items-center gap-2 pt-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-xs font-medium text-muted-foreground/80">
+                  Available for projects internationally.
+                </span>
+              </div>
+
               {/* Submit */}
               <button
                 type="submit"
-                disabled={status === "loading"}                    className="btn-dark w-full h-12 rounded-xl bg-[#0a0a0b] text-white text-button font-medium flex items-center justify-center gap-2 hover:bg-[#1a1a1c] active:scale-[0.98] disabled:opacity-40 transition-all duration-300"
+                disabled={status === "loading"}
+                className="btn-dark w-full h-12 rounded-xl bg-[#0a0a0b] text-white text-button font-medium flex items-center justify-center gap-2 hover:bg-[#1a1a1c] active:scale-[0.98] disabled:opacity-40 transition-all duration-300"
               >
                 {status === "loading" ? (
                   <>
@@ -328,22 +344,22 @@ export function Contact({ site, links }: { site: SiteData; links: LinksData }) {
             </form>
           )}
 
-          {/* WhatsApp CTA */}
+          {/* Telegram CTA */}
           <div className="flex flex-col justify-center gap-6 lg:pl-8">
             <div className="rounded-2xl border border-border bg-surface p-7">
-              <h3 className="text-display-sm font-medium mb-2">Prefer WhatsApp?</h3>
+              <h3 className="text-display-sm font-medium mb-2">Prefer Telegram?</h3>
               <p className="text-body-sm text-muted-foreground mb-5 leading-[var(--leading-body)]">
-                If you&apos;d rather chat directly, send me a message on WhatsApp and
+                If you&apos;d rather chat directly, send me a message on Telegram and
                 I&apos;ll respond as quickly as possible.
               </p>
               <a
-                href={whatsappUrl}
+                href={telegramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button variant="secondary" className="w-full" size="lg">
                   <MessageCircle size={18} />
-                  Chat on WhatsApp
+                  Chat on Telegram
                 </Button>
               </a>
             </div>

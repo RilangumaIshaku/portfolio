@@ -1,37 +1,38 @@
-export interface FAQ {
+export interface FAQItem {
   question: string;
   answer: string;
 }
 
-export const faqs: FAQ[] = [
+export const faqs: FAQItem[] = [
   {
-    question: "How long does it take to build a website?",
+    question: "Where are your clients located and how does collaboration work?",
     answer:
-      "Most projects are completed within 2–6 weeks, depending on complexity. A simple business website can be ready in about two weeks, while more complex projects with custom functionality may take longer. I'll provide a clear timeline after our discovery call.",
+      "I collaborate with ambitious businesses worldwide. All engagements are remote, structured, and conducted in fluent English through scheduled video milestones, clear async documentation, and live staging previews.",
   },
   {
-    question: "Do you work with businesses outside Nigeria?",
+    question: "How are projects scoped and priced?",
     answer:
-      "Absolutely. While I'm based in Nigeria and work with many local businesses, I collaborate with clients worldwide. Remote collaboration is seamless — we'll use tools like Slack, Zoom, and shared project boards to stay connected.",
+      "Projects typically start from €1,000 and are scoped individually based on your goals, requirements and complexity. You receive a clear, fixed-price proposal with no hidden fees before any work begins.",
   },
   {
-    question: "What do I need to provide before we start?",
+    question:
+      "What is the typical project timeline from kickoff to launch?",
     answer:
-      "At minimum, I'll need your brand assets (logo, brand colors if any), content (text, images), and a clear idea of what you want the website to achieve. Don't worry if you don't have everything — we'll figure it out together during the discovery phase.",
+      "Most custom website projects are completed within 2 to 6 weeks depending on scope. We agree on a defined milestone schedule during the kickoff phase, ensuring deliberate pacing, thorough testing, and predictable delivery.",
   },
   {
-    question: "Do you provide hosting and domain?",
+    question: "What technologies and standards do you build with?",
     answer:
-      "I can help you set up hosting and domain registration and will recommend the best options for your needs. I typically deploy on Vercel, Netlify, or similar modern platforms. Hosting costs are separate from the project fee.",
+      "I build with modern industry standards—predominantly Next.js, React, TypeScript, and Tailwind CSS, integrated with flexible headless CMS platforms. This guarantees sub-second page loads, responsive fidelity, strong SEO fundamentals, and clean, maintainable code.",
   },
   {
-    question: "Will my website work on mobile?",
+    question: "Who owns the code and website assets upon completion?",
     answer:
-      "Every website I build is fully responsive and optimized for mobile, tablet, and desktop. I test across multiple screen sizes and devices before launch. Mobile-first design is a core part of my process.",
+      "You own 100% of the intellectual property, design assets, and source code upon final handover. There are zero proprietary vendor lock-ins or recurring platform dependencies.",
   },
   {
-    question: "What happens after the website launches?",
+    question: "Is post-launch support and ongoing maintenance available?",
     answer:
-      "I offer post-launch support to handle any issues or adjustments. Depending on your plan, this may include a support period. For ongoing updates, maintenance, or new features, I offer flexible retainer arrangements.",
+      "Yes. Every deployment includes post-launch verification and a comprehensive handover. For businesses looking for ongoing performance monitoring, continuous iteration, or new feature development, retainer arrangements are available.",
   },
 ];

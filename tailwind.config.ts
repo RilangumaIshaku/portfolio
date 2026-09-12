@@ -45,14 +45,16 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          "Switzer",
           "SF Pro Display",
+          "SF Pro Text",
           "SF Pro",
           "-apple-system",
           "BlinkMacSystemFont",
-          "system-ui",
           "Segoe UI",
           "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "system-ui",
           "sans-serif",
         ],
       },

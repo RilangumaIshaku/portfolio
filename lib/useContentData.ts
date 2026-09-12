@@ -7,7 +7,6 @@ interface ContentData {
   faq: any[];
   projects: any[];
   testimonials: any[];
-  pricing: any[];
   process: any[];
   advantages: any[];
 }
@@ -17,7 +16,6 @@ const defaultData: ContentData = {
   faq: [],
   projects: [],
   testimonials: [],
-  pricing: [],
   process: [],
   advantages: [],
 };
@@ -48,7 +46,6 @@ export function useContentData() {
           faq: result.faq || [],
           projects: result.projects || [],
           testimonials: result.testimonials || [],
-          pricing: result.pricing || [],
           process: result.process || [],
           advantages: result.advantages || [],
         };

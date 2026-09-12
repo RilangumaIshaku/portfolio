@@ -13,6 +13,7 @@ interface SiteData {
 const navLinks = [
   { label: "Work", href: "#work" },
   { label: "Services", href: "#services" },
+  { label: "About", href: "#about" },
   { label: "Process", href: "#process" },
   { label: "Pricing", href: "#pricing" },
   { label: "Contact", href: "#contact" },
@@ -45,6 +46,9 @@ export function Footer({ site }: { site: SiteData }) {
             </a>
             <p className="mt-3 text-body-sm leading-[var(--leading-body)] text-muted-foreground">
               {site.description}
+            </p>
+            <p className="mt-2 text-caption text-muted-foreground/75">
+              Available for projects worldwide — working remotely with clients everywhere.
             </p>
           </div>
 

@@ -71,10 +71,10 @@ export function SiteSection({
               type="email"
             />
           </Field>
-          <Field label="WhatsApp" hint="With country code, no + or spaces">
+          <Field label="Telegram" hint="Username-based link, e.g. https://t.me/username">
             <Input
-              value={data.whatsapp}
-              onChange={(v) => u("whatsapp", v)}
+              value={data.telegram}
+              onChange={(v) => u("telegram", v)}
             />
           </Field>
         </div>

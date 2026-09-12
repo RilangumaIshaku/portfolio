@@ -2,43 +2,50 @@ export interface ProcessStep {
   number: string;
   title: string;
   description: string;
+  image?: string;
 }
 
 export const processSteps: ProcessStep[] = [
   {
-    number: "1",
-    title: "Discovery & Direction",
+    number: "01",
+    title: "Discover",
     description:
-      "We start by understanding your business, goals, audience and what the website needs to achieve.",
+      "We understand your business, audience and objectives before anything is designed.",
+    image: "/uploads/process-step-0-image-1787604262441.jpg",
   },
   {
-    number: "2",
-    title: "Strategy & Structure",
+    number: "02",
+    title: "Define",
     description:
-      "I define the website structure, priorities and user journey before the main build begins.",
+      "We establish the structure, content and experience needed to achieve those objectives.",
+    image: "/uploads/process-step-1-image-1787604278310.jpg",
   },
   {
-    number: "3",
-    title: "Wireframing & User Flow",
+    number: "03",
+    title: "Design",
     description:
-      "I map the layout and user experience so every section has a clear purpose.",
+      "The interface is crafted around your brand, users and business goals.",
+    image: "/uploads/process-step-2-image-1787604288449.jpg",
   },
   {
-    number: "4",
-    title: "Visual Design & Interaction",
+    number: "04",
+    title: "Build",
     description:
-      "I turn the structure into a polished visual experience with thoughtful details and interactions.",
+      "The approved experience becomes a fast, responsive and production-ready website.",
+    image: "/uploads/process-step-3-image-1787604333940.jpg",
   },
   {
-    number: "5",
-    title: "Development & Refinement",
+    number: "05",
+    title: "Refine",
     description:
-      "I build the website, make it responsive and refine the details across devices.",
+      "Everything is tested across devices, browsers and real-world conditions.",
+    image: "/uploads/process-step-4-image-1787604306751.avif",
   },
   {
-    number: "6",
-    title: "Testing & Launch",
+    number: "06",
+    title: "Launch",
     description:
-      "Everything is tested, optimized and deployed so the final product is ready for real users.",
+      "Your website goes live, with support available beyond launch.",
+    image: "/uploads/process-step-5-image-1787604311645.jpg",
   },
 ];

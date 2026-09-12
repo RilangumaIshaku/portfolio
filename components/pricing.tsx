@@ -1,20 +1,24 @@
 "use client";
 
 import { useInView } from "@/lib/useInView";
-import { useContentData } from "@/lib/useContentData";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { useCurrency } from "@/lib/useCurrency";
+import {
+  useVisitorMarket,
+  type VisitorMarket,
+} from "@/lib/visitor-market";
+import {
+  getPricingTiers,
+  getPricingAnchor,
+  type PricingTier,
+} from "@/lib/pricing";
 import { Check, ArrowUpRight } from "lucide-react";
 
-export function Pricing({ initialData }: { initialData?: any[] } = {}) {
+export function Pricing() {
   const { ref, isInView } = useInView();
-  const { formatPrice } = useCurrency();
-  const { data } = useContentData();
-  const pricingTiers = initialData && initialData.length > 0 ? initialData : data.pricing;
-
-  if (pricingTiers.length === 0) return null;
+  const market: VisitorMarket = useVisitorMarket();
+  const pricingTiers = getPricingTiers(market);
 
   const scrollToContact = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -22,19 +26,19 @@ export function Pricing({ initialData }: { initialData?: any[] } = {}) {
   };
 
   return (
-    <section className="section-spacing bg-muted/30">
+    <section id="pricing" className="section-spacing bg-muted/30">
       <div className="section-container section-padding">
         <SectionHeading
-          label="Pricing"
-          title="Transparent, fair pricing"
-          description="Every project is different, but these starting tiers give you a clear idea. We can always discuss what's right for your specific needs."
+          label="Investment &amp; Scoping"
+          title={getPricingAnchor(market)}
+          description="Every project is scoped individually based on your goals, requirements and complexity."
         />
 
         <div
           ref={ref}
           className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 max-w-5xl mx-auto"
         >
-          {pricingTiers.map((tier: any, i: number) => (
+          {pricingTiers.map((tier: PricingTier, i: number) => (
             <div
               key={tier.name}
               className={cn(
@@ -50,7 +54,7 @@ export function Pricing({ initialData }: { initialData?: any[] } = {}) {
             >
               {tier.highlighted && (
                 <div className="btn-dark absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#0a0a0b] text-white text-caption font-medium">
-                  Most Popular
+                  Recommended Scope
                 </div>
               )}
               {/* Subtle top accent line for highlighted tier */}
@@ -64,9 +68,18 @@ export function Pricing({ initialData }: { initialData?: any[] } = {}) {
               </div>
 
               <div className="mb-4">
-                <span className="text-display-sm">
-                  {tier.priceAmount > 0 ? formatPrice(tier.priceAmount) : tier.price}
-                </span>
+                {tier.custom ? (
+                  <span className="text-display-sm font-semibold">
+                    Let&apos;s discuss your requirements.
+                  </span>
+                ) : (
+                  <span className="text-display-sm font-semibold">
+                    <span className="text-muted-foreground text-body-sm font-normal">
+                      From{" "}
+                    </span>
+                    {tier.price}
+                  </span>
+                )}
               </div>
 
               <ul className="flex-1 space-y-2.5 mb-5">
@@ -86,24 +99,30 @@ export function Pricing({ initialData }: { initialData?: any[] } = {}) {
 
               <Button
                 variant={tier.highlighted ? "primary" : "secondary"}
-                className="w-full"
+                className="w-full text-xs font-medium"
                 onClick={scrollToContact}
               >
-                Get Started
+                Request a project estimate
               </Button>
             </div>
           ))}
         </div>
 
-        {/* Explore more pricing link */}
+        {/* Tailored scoping discussion link */}
         <div className="mt-12 text-center">
           <a
-            href="/pricing"
+            href="#contact"
+            onClick={scrollToContact}
             className="inline-flex items-center gap-1.5 text-body-sm text-muted-foreground hover:text-primary transition-colors"
           >
-            Explore more pricing
+            Have unique requirements? Request a custom project estimate
             <ArrowUpRight size={14} className="transition-transform hover:translate-x-0.5" />
           </a>
+
+          {/* Small, subtle disclaimer */}
+          <p className="mt-4 text-caption text-muted-foreground/50">
+            Final pricing varies based on project scope, requirements and market.
+          </p>
         </div>
       </div>
     </section>

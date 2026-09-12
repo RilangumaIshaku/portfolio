@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useContentData } from "@/lib/useContentData";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -48,15 +47,13 @@ export function Projects({ images }: { images?: Record<string, string> }) {
   const { data } = useContentData();
   const projects = data.projects;
 
-  if (projects.length === 0) return null;
-
   return (
     <section id="work" className="section-spacing bg-muted/30">
       <div className="section-container section-padding">
         <SectionHeading
           label="Selected Work"
-          title="Projects I've built"
-          description="A selection of projects that showcase what I can deliver — from marketplaces to AI platforms to modern business websites."
+          title="Selected work"
+          description="A selection of digital experiences I've designed and developed."
         />
 
         <div className="space-y-6 md:space-y-10">
@@ -66,16 +63,12 @@ export function Projects({ images }: { images?: Record<string, string> }) {
             const projectAccent =
               PROJECT_ACCENTS[project.id] || DEFAULT_ACCENT;
             return (
-              <motion.div
+              <div
                 key={project.id}
                 className="group"
-                initial={{ opacity: 0, y: 48 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{
-                  duration: 0.7,
-                  delay: i * 0.1,
-                  ease: [0.23, 1, 0.32, 1],
+                style={{
+                  animation: "fadeInUp 0.7s ease both",
+                  animationDelay: `${i * 120}ms`,
                 }}
               >
                 <div
@@ -88,7 +81,10 @@ export function Projects({ images }: { images?: Record<string, string> }) {
                 >
                   {/* Project image */}
                   <div
-                    className={cn("relative", i % 2 !== 0 && "md:order-2")}
+                    className={cn(
+                      "relative",
+                      i % 2 !== 0 && "md:order-2"
+                    )}
                   >
                     <div className="rounded-xl border border-border bg-surface shadow-xl shadow-black/[0.04] overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-black/[0.06] group-hover:-translate-y-1">
                       <div
@@ -108,34 +104,25 @@ export function Projects({ images }: { images?: Record<string, string> }) {
                             <div className="flex items-center justify-between mb-6 md:mb-8">
                               <div
                                 className="h-4 w-24 rounded"
-                                style={{
-                                  backgroundColor: `${project.color}20`,
-                                }}
+                                style={{ backgroundColor: `${project.color}20` }}
                               />
                               <div className="flex gap-3">
                                 {[...Array(3)].map((_, j) => (
-                                  <div
-                                    key={j}
-                                    className="h-2.5 w-10 rounded bg-primary/8"
-                                  />
+                                  <div key={j} className="h-2.5 w-10 rounded bg-primary/8" />
                                 ))}
                               </div>
                             </div>
                             <div className="flex-1 flex flex-col justify-center">
                               <div
                                 className="h-7 md:h-8 w-44 md:w-56 rounded-lg mb-3"
-                                style={{
-                                  backgroundColor: `${project.color}12`,
-                                }}
+                                style={{ backgroundColor: `${project.color}12` }}
                               />
                               <div className="h-3 w-full max-w-md rounded bg-primary/5 mb-1.5" />
                               <div className="h-3 w-3/4 max-w-sm rounded bg-primary/5 mb-5" />
                               <div className="flex gap-2">
                                 <div
                                   className="h-7 w-24 rounded-full"
-                                  style={{
-                                    backgroundColor: `${project.color}18`,
-                                  }}
+                                  style={{ backgroundColor: `${project.color}18` }}
                                 />
                                 <div className="h-7 w-24 rounded-full border border-border" />
                               </div>
@@ -153,7 +140,7 @@ export function Projects({ images }: { images?: Record<string, string> }) {
                       </div>
                     </div>
 
-                    {/* Visible radial accent glow behind the card */}
+                    {/* Radial accent glow */}
                     <div
                       className="absolute -inset-6 -z-10 rounded-3xl opacity-40 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none"
                       style={{
@@ -187,7 +174,7 @@ export function Projects({ images }: { images?: Record<string, string> }) {
                         i % 2 !== 0 && "md:justify-end"
                       )}
                     >
-                      {project.technologies.map((tech: string) => (
+                      {project.technologies?.map((tech: string) => (
                         <span
                           key={tech}
                           className="px-3 py-1 rounded-full border border-border bg-surface text-caption font-medium text-muted-foreground transition-colors duration-300 group-hover:border-border/80"
@@ -218,7 +205,7 @@ export function Projects({ images }: { images?: Record<string, string> }) {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

@@ -27,7 +27,7 @@ export function JsonLd() {
     "@context": "https://schema.org",
     "@type": "Person",
     name: content.site.name,
-    jobTitle: "Freelance Web Developer",
+    jobTitle: "Independent Web Designer & Developer",
     url: siteUrl,
     email: content.site.email,
     sameAs: [
@@ -36,20 +36,17 @@ export function JsonLd() {
       content.site.socials.twitter,
     ].filter(Boolean),
     knowsAbout: [
+      "Web Design",
       "Web Development",
       "Next.js",
       "React",
       "TypeScript",
       "Tailwind CSS",
-      "Web Design",
-      "Responsive Design",
-      "Frontend Development",
+      "UI/UX Design",
+      "Information Architecture",
+      "Performance Optimization",
     ],
     description: content.site.description,
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "NG",
-    },
   };
 
   // FAQ schema (shows rich results in Google)

@@ -27,26 +27,9 @@ export function LinksSection({
           Links & SEO
         </h1>
         <p className="text-sm text-white/30 mt-1">
-          WhatsApp message, page title, meta description, and OG image.
+          Page title, meta description, and OG image.
         </p>
       </div>
-      <Card>
-        <p className="text-[11px] text-white/20 uppercase tracking-[0.1em] font-medium mb-3">
-          WhatsApp
-        </p>
-        <Field
-          label="Default Message"
-          hint="Pre-filled when someone clicks WhatsApp"
-        >
-          <TextArea
-            value={links.whatsappMessage}
-            onChange={(v) =>
-              setLinks((p) => ({ ...p, whatsappMessage: v }))
-            }
-            rows={2}
-          />
-        </Field>
-      </Card>
       <Card>
         <p className="text-[11px] text-white/20 uppercase tracking-[0.1em] font-medium mb-3">
           SEO Metadata
