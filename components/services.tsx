@@ -34,8 +34,8 @@ const SERVICE_ACCENTS = [
   { color: "#729B98", muted: "rgba(114, 155, 152, 0.12)" }, // teal
 ];
 
-export function Services() {
-  const { data } = useContentData();
+export function Services({ initialData }: { initialData?: any[] } = {}) {
+  const { data } = useContentData({ services: initialData });
   const services = data.services;
 
   if (services.length === 0) return null;

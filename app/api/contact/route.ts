@@ -1,6 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeData, readData } from "@/lib/data-store";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { Resend } from "resend";
+
+/**
+ * Escape user-provided strings before interpolating into the HTML email
+ * template. Without this, a submitter could inject arbitrary HTML (e.g.
+ * hidden links or forged content) into the inquiry email.
+ */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** Keep payloads bounded so a single request can't bloat storage. */
+function sanitize(value: unknown, maxLen: number): string {
+  const str = typeof value === "string" ? value : "";
+  return str.trim().slice(0, maxLen);
+}
+
+// Retention: keep the most recent N submissions so the store can't grow forever.
+const MAX_SUBMISSIONS = 200;
+
+// Rate limit: 5 submissions per IP per 10 minutes.
+const CONTACT_LIMIT = 5;
+const CONTACT_WINDOW_MS = 10 * 60 * 1000;
 
 interface ContactSubmission {
   name: string;
@@ -36,41 +64,41 @@ function buildEmailHtml(submission: ContactSubmission): string {
     <div style="padding:32px 40px;">
       <div style="margin-bottom:24px;">
         <p style="margin:0 0 4px;color:#78716c;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;">Name</p>
-        <p style="margin:0;color:#0a0a0b;font-size:15px;font-weight:500;">${submission.name}</p>
+        <p style="margin:0;color:#0a0a0b;font-size:15px;font-weight:500;">${escapeHtml(submission.name)}</p>
       </div>
 
       <div style="margin-bottom:24px;">
         <p style="margin:0 0 4px;color:#78716c;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;">Email</p>
         <p style="margin:0;color:#0a0a0b;font-size:15px;">
-          <a href="mailto:${submission.email}" style="color:#7187C4;text-decoration:none;">${submission.email}</a>
+          <a href="mailto:${escapeHtml(submission.email)}" style="color:#7187C4;text-decoration:none;">${escapeHtml(submission.email)}</a>
         </p>
       </div>
 
       ${submission.company ? `
       <div style="margin-bottom:24px;">
         <p style="margin:0 0 4px;color:#78716c;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;">Company</p>
-        <p style="margin:0;color:#0a0a0b;font-size:15px;">${submission.company}</p>
+        <p style="margin:0;color:#0a0a0b;font-size:15px;">${escapeHtml(submission.company)}</p>
       </div>
       ` : ""}
 
       ${submission.projectType ? `
       <div style="margin-bottom:24px;">
         <p style="margin:0 0 4px;color:#78716c;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;">Project Type</p>
-        <p style="margin:0;color:#0a0a0b;font-size:15px;">${submission.projectType}</p>
+        <p style="margin:0;color:#0a0a0b;font-size:15px;">${escapeHtml(submission.projectType)}</p>
       </div>
       ` : ""}
 
       ${submission.budget ? `
       <div style="margin-bottom:24px;">
         <p style="margin:0 0 4px;color:#78716c;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;">Budget</p>
-        <p style="margin:0;color:#0a0a0b;font-size:15px;">${submission.budget}</p>
+        <p style="margin:0;color:#0a0a0b;font-size:15px;">${escapeHtml(submission.budget)}</p>
       </div>
       ` : ""}
 
       <div style="margin-bottom:24px;">
         <p style="margin:0 0 4px;color:#78716c;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;">Message</p>
         <div style="margin:0;color:#0a0a0b;font-size:15px;line-height:1.6;background:#f5f5f4;padding:16px;border-radius:8px;">
-          ${submission.message.replace(/\n/g, "<br>")}
+          ${escapeHtml(submission.message).replace(/\n/g, "<br>")}
         </div>
       </div>
     </div>
@@ -88,6 +116,16 @@ function buildEmailHtml(submission: ContactSubmission): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit before doing any work
+    const ip = getClientIp(request);
+    const rl = rateLimit(`contact:${ip}`, CONTACT_LIMIT, CONTACT_WINDOW_MS);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Too many submissions. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } }
+      );
+    }
+
     const body = await request.json();
 
     // Validate required fields
@@ -108,22 +146,22 @@ export async function POST(request: NextRequest) {
     }
 
     const submission: ContactSubmission = {
-      name,
-      email,
-      company: body.company || "",
-      projectType: body.projectType || "",
-      budget: body.budget || "",
-      message,
+      name: sanitize(name, 120),
+      email: sanitize(email, 254),
+      company: sanitize(body.company, 160),
+      projectType: sanitize(body.projectType, 80),
+      budget: sanitize(body.budget, 80),
+      message: sanitize(message, 5000),
       submittedAt: new Date().toISOString(),
     };
 
-    // Store submission in data store
+    // Store submission in data store — capped at MAX_SUBMISSIONS entries
     const submissions = await readData<ContactSubmission[]>(
       "contact_submissions",
       []
     );
     submissions.push(submission);
-    await writeData("contact_submissions", submissions);
+    await writeData("contact_submissions", submissions.slice(-MAX_SUBMISSIONS));
 
     // Send email via Resend (if configured)
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -136,7 +174,7 @@ export async function POST(request: NextRequest) {
           from: process.env.RESEND_FROM_EMAIL || "Portfolio <onboarding@resend.dev>",
           to: contactEmail,
           replyTo: email,
-          subject: `New project inquiry from ${name}`,
+          subject: `New project inquiry from ${submission.name}`,
           html: buildEmailHtml(submission),
         });
         console.log(`[Contact] Email sent to ${contactEmail} from ${name} <${email}>`);

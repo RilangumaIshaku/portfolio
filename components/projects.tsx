@@ -43,8 +43,14 @@ const DEFAULT_ACCENT = {
   glow: "rgba(201, 139, 124, 0.18)",
 };
 
-export function Projects({ images }: { images?: Record<string, string> }) {
-  const { data } = useContentData();
+export function Projects({
+  images,
+  initialData,
+}: {
+  images?: Record<string, string>;
+  initialData?: any[];
+}) {
+  const { data } = useContentData({ projects: initialData });
   const projects = data.projects;
 
   return (

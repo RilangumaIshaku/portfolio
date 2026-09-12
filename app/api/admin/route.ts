@@ -3,6 +3,11 @@ import { revalidatePath } from "next/cache";
 import { readData, writeData, SECTION_KEYS, USE_KV, getStorageInfo } from "@/lib/data-store";
 import { createToken, verifyToken } from "@/lib/auth";
 import { uploadImage } from "@/lib/image-upload";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
+
+// Brute-force protection: 10 login attempts per IP per 15 minutes.
+const LOGIN_LIMIT = 10;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 // ── Interfaces ─────────────────────────────────────────────
 interface AvailabilityData {
@@ -141,6 +146,17 @@ export async function POST(request: NextRequest) {
       const { password } = body;
       if (!password) {
         return NextResponse.json({ error: "Password required" }, { status: 400 });
+      }
+      const rl = rateLimit(
+        `admin-login:${getClientIp(request)}`,
+        LOGIN_LIMIT,
+        LOGIN_WINDOW_MS
+      );
+      if (!rl.allowed) {
+        return NextResponse.json(
+          { error: "Too many login attempts. Try again later." },
+          { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } }
+        );
       }
       try {
         const token = createToken(password);

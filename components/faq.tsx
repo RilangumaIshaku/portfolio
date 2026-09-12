@@ -7,9 +7,9 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Minus } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/ui/animated-section";
 
-export function FAQ() {
+export function FAQ({ initialData }: { initialData?: any[] } = {}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { data } = useContentData();
+  const { data } = useContentData({ faq: initialData });
   const faqs = data.faq;
 
   if (faqs.length === 0) return null;

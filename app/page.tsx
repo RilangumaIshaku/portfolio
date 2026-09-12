@@ -24,33 +24,44 @@ interface AvailabilityData {
 }
 
 export default async function Home() {
-  const [content, availability, processData, testimonialsData, advantagesData] =
-    await Promise.all([
-      getSiteContentAsync(),
-      readData<AvailabilityData>("availability", {
-        isAvailable: true,
-        status: "Available for new projects",
-        color: "green",
-      }),
-      readData<any[]>("process", []),
-      readData<any[]>("testimonials", []),
-      readData<any[]>("advantages", []),
-    ]);
+  const [
+    content,
+    availability,
+    processData,
+    testimonialsData,
+    advantagesData,
+    servicesData,
+    faqData,
+    projectsData,
+  ] = await Promise.all([
+    getSiteContentAsync(),
+    readData<AvailabilityData>("availability", {
+      isAvailable: true,
+      status: "Available for new projects",
+      color: "green",
+    }),
+    readData<any[]>("process", []),
+    readData<any[]>("testimonials", []),
+    readData<any[]>("advantages", []),
+    readData<any[]>("services", []),
+    readData<any[]>("faq", []),
+    readData<any[]>("projects", []),
+  ]);
 
   return (
     <>
       <Navbar site={content.site} />
       <main>
-        <Hero availability={availability} hero={content.hero} />
+        <Hero availability={availability} hero={content.hero} projects={projectsData} />
         <TrustStrip />
-        <Services />
-        <Projects images={content.images.projects} />
+        <Services initialData={servicesData} />
+        <Projects images={content.images.projects} initialData={projectsData} />
         <About />
         <Advantages initialData={advantagesData} />
         <Process initialData={processData} />
         <Testimonials initialData={testimonialsData} />
         <Pricing />
-        <FAQ />
+        <FAQ initialData={faqData} />
         <Contact site={content.site} />
       </main>
       <Footer site={content.site} />

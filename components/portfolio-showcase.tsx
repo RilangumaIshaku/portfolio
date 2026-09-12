@@ -12,8 +12,10 @@ const CYCLE_INTERVAL = 10000;
  * Supports video, image fallback, and auto-cycling with smooth crossfade via framer-motion.
  */
 
-export function PortfolioShowcase() {
-  const { data } = useContentData();
+export function PortfolioShowcase({
+  initialData,
+}: { initialData?: any[] } = {}) {
+  const { data } = useContentData({ projects: initialData });
   const projects = data.projects;
   const [activeIndex, setActiveIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
