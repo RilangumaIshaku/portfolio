@@ -81,10 +81,25 @@ export const defaults: SiteContent = {
 };
 
 /**
+ * Ensure an external URL is absolute. The admin panel may save values like
+ * "t.me/rilanguma" (no scheme) — without normalization React treats that as
+ * a relative path and the link resolves to your own domain, e.g.
+ * https://yoursite.com/t.me/rilanguma.
+ */
+function ensureAbsoluteUrl(value: string): string {
+  const trimmed = (value || "").trim();
+  if (!trimmed) return trimmed;
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("mailto:") || trimmed.startsWith("#")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+}
+
+/**
  * Deep-merge raw content with defaults so missing fields are always filled in.
  */
 function mergeWithDefaults(raw: Partial<SiteContent>): SiteContent {
-  return {
+  const merged = {
     site: { ...defaults.site, ...raw.site, socials: { ...defaults.site.socials, ...raw.site?.socials } },
     seo: { ...defaults.seo, ...raw.seo },
     hero: { ...defaults.hero, ...raw.hero },
@@ -93,7 +108,13 @@ function mergeWithDefaults(raw: Partial<SiteContent>): SiteContent {
       projects: { ...defaults.images.projects, ...raw.images?.projects },
     },
     links: { ...defaults.links, ...raw.links },
-  };
+  } as SiteContent;
+  // Normalize external URLs so scheme-less admin entries can't break links.
+  merged.site.telegram = ensureAbsoluteUrl(merged.site.telegram);
+  for (const key of Object.keys(merged.site.socials) as Array<keyof SiteContent["site"]["socials"]>) {
+    merged.site.socials[key] = ensureAbsoluteUrl(merged.site.socials[key]);
+  }
+  return merged;
 }
 
 /**
