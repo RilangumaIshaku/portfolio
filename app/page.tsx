@@ -1,14 +1,12 @@
 import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/hero";
-import { TrustStrip } from "@/components/trust-strip";
 import { Services } from "@/components/services";
 import { Projects } from "@/components/projects";
 import { Process } from "@/components/process";
-import { Testimonials } from "@/components/testimonials";
-import { Pricing } from "@/components/pricing";
-import { FAQ } from "@/components/faq";
+import { BeyondWork } from "@/components/beyond-work";
 import { About } from "@/components/about";
-import { Advantages } from "@/components/advantages";
+import { Testimonials } from "@/components/testimonials";
+import { FAQ } from "@/components/faq";
 import { Contact } from "@/components/contact";
 import { Footer } from "@/components/footer";
 import { getSiteContentAsync } from "@/lib/siteContent";
@@ -29,7 +27,6 @@ export default async function Home() {
     availability,
     processData,
     testimonialsData,
-    advantagesData,
     servicesData,
     faqData,
     projectsData,
@@ -42,7 +39,6 @@ export default async function Home() {
     }),
     readData<any[]>("process", []),
     readData<any[]>("testimonials", []),
-    readData<any[]>("advantages", []),
     readData<any[]>("services", []),
     readData<any[]>("faq", []),
     readData<any[]>("projects", []),
@@ -53,14 +49,12 @@ export default async function Home() {
       <Navbar site={content.site} />
       <main>
         <Hero availability={availability} hero={content.hero} projects={projectsData} />
-        <TrustStrip />
-        <Services initialData={servicesData} />
         <Projects images={content.images.projects} initialData={projectsData} />
-        <About />
-        <Advantages initialData={advantagesData} />
+        <Services initialData={servicesData} />
         <Process initialData={processData} />
-        <Testimonials initialData={testimonialsData} />
-        <Pricing />
+        <BeyondWork />
+        <About />
+        {testimonialsData.length > 0 && <Testimonials initialData={testimonialsData} />}
         <FAQ initialData={faqData} />
         <Contact site={content.site} />
       </main>

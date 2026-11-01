@@ -12,10 +12,9 @@ interface SiteData {
 
 const navLinks = [
   { label: "Work", href: "#work" },
-  { label: "Services", href: "#services" },
+  { label: "Capabilities", href: "#capabilities" },
   { label: "About", href: "#about" },
   { label: "Process", href: "#process" },
-  { label: "Pricing", href: "#pricing" },
   { label: "Contact", href: "#contact" },
 ];
 
