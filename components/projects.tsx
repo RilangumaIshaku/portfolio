@@ -25,15 +25,15 @@ const PROJECT_ACCENTS: Record<
     muted: "rgba(113, 135, 196, 0.12)",
     glow: "rgba(113, 135, 196, 0.18)",
   },
-  bloomstudio: {
-    accent: "#C4A66B",
-    muted: "rgba(196, 166, 107, 0.12)",
-    glow: "rgba(196, 166, 107, 0.18)",
+  root: {
+    accent: "#8A93A8",
+    muted: "rgba(138, 147, 168, 0.12)",
+    glow: "rgba(138, 147, 168, 0.18)",
   },
-  medconnect: {
-    accent: "#729B98",
-    muted: "rgba(114, 155, 152, 0.12)",
-    glow: "rgba(114, 155, 152, 0.18)",
+  sotion: {
+    accent: "#8B7FD4",
+    muted: "rgba(139, 127, 212, 0.12)",
+    glow: "rgba(139, 127, 212, 0.18)",
   },
 };
 
