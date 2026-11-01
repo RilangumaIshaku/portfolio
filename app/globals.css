@@ -7,8 +7,8 @@
    ================================ */
 
 :root {
-  /* Primary (near-black) */
-  --color-primary: #0a0a0b;
+  /* Primary — charcoal */
+  --color-primary: #171717;
   --color-primary-foreground: #fafafa;
 
   /* Secondary */
@@ -21,33 +21,33 @@
   --color-accent-hover: #1c1917;
   --color-accent-muted: rgba(41, 37, 36, 0.06);
 
-  /* Sophisticated accent palette — Apple × Notion × editorial */
+  /* Sophisticated accent palette — quiet confidence */
   --accent-blue: #7187C4;
   --accent-lilac: #9B8FBC;
-  --accent-sage: #8FA58D;
+  --accent-sage: #A6B2A1;
   --accent-coral: #C98B7C;
   --accent-amber: #C4A66B;
   --accent-teal: #729B98;
 
-  /* Muted versions for backgrounds / atmospheres — more visible */
-  --accent-blue-muted: rgba(113, 135, 196, 0.12);
-  --accent-lilac-muted: rgba(155, 143, 188, 0.12);
-  --accent-sage-muted: rgba(143, 165, 141, 0.12);
-  --accent-coral-muted: rgba(201, 139, 124, 0.12);
-  --accent-amber-muted: rgba(196, 166, 107, 0.12);
-  --accent-teal-muted: rgba(114, 155, 152, 0.12);
-  --accent-warm-muted: rgba(205, 181, 135, 0.15);
+  /* Muted versions for backgrounds / atmospheres — barely visible */
+  --accent-blue-muted: rgba(113, 135, 196, 0.04);
+  --accent-lilac-muted: rgba(155, 143, 188, 0.04);
+  --accent-sage-muted: rgba(166, 178, 161, 0.04);
+  --accent-coral-muted: rgba(201, 139, 124, 0.04);
+  --accent-amber-muted: rgba(196, 166, 107, 0.04);
+  --accent-teal-muted: rgba(114, 155, 152, 0.04);
+  --accent-warm-muted: rgba(205, 181, 135, 0.04);
 
   /* Muted — warm off-white */
-  --color-muted: #f5f5f4;
-  --color-muted-foreground: #78716c;
+  --color-muted: #EFEFEC;
+  --color-muted-foreground: #777873;
 
   /* Border — warm, subtle */
-  --color-border: #e7e5e4;
+  --color-border: #E4E4E0;
 
-  /* Surfaces — warm whites */
-  --color-surface: #fafaf9;
-  --color-surface-elevated: #ffffff;
+  /* Surfaces — warm off-white */
+  --color-surface: #F7F7F4;
+  --color-surface-elevated: #FFFFFF;
 
   /* ================================
      Typography Tokens

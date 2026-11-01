@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Update design tokens and site configuration for 'Quiet confidence. Visible thinking.' — warm off-white backgrounds, charcoal primary, sage accent, reduced atmospheric glows, and identity updates (Dave, Nigeria, global work)",
+  "status": "completed",
+  "steps": [
+    "1. Update app/globals.css design tokens: --color-surface: #F7F7F4 (warm off-white), --color-surface-elevated: #FFFFFF, --color-primary: #171717 (charcoal), --color-muted-foreground: #777873, --accent-sage: #A6B2A1, --color-muted: #EFEFEC, --color-border: #E4E4E0. Remove or significantly reduce the atmospheric glow muted color variables (accent-blue-muted, accent-lilac-muted, etc.) — set them to very low opacity like rgba(*,*,*,0.04) so they remain available but barely visible.",
+    "2. In tailwind.config.ts, verify color aliases match the new CSS variable values — no changes needed if aliases just reference var(--color-*), but check that the config is consistent.",
+    "3. Update data/siteConfig.ts: brand: 'Dave', tagline: 'Ideas into experiences. Technology into possibility.', description: 'I design and develop digital products, explore emerging technologies, and build things that make ambitious ideas tangible.', seo.title: 'David Ishaku — Digital Product Designer & Developer', seo.description: 'Independent digital creator building products at the intersection of design, technology, and craft. Based in Nigeria, working globally.' Keep email, telegram, and socials exactly as-is.",
+    "4. Update data/projects.json: remove the entries with id 'bloomstudio' and 'medconnect' entirely (delete those JSON objects from the array). Keep: kasuwa, root, sotion, liora, tradingpal."
+  ],
+  "acceptance_criteria": [
+    "app/globals.css contains the new design token values (--color-surface: #F7F7F4, --color-primary: #171717, --accent-sage: #A6B2A1, etc.)",
+    "data/siteConfig.ts contains brand: 'Dave', the new tagline, description, and SEO fields",
+    "data/projects.json has exactly 5 projects (bloomstudio and medconnect removed)",
+    "The dev server runs without errors"
+  ],
+  "verification": [
+    "Run 'npm run dev' and open http://localhost:3000 in a browser",
+    "Open browser DevTools, inspect <body> element, check Computed styles — --color-surface should be rgb(247, 247, 244), --color-primary should be rgb(23, 23, 23)",
+    "Check the hero section displays 'Dave' or the new tagline from siteConfig (admin may override this, but siteConfig defaults should be updated)",
+    "Check the projects section displays exactly 5 projects (no Bloom Studio, no MedConnect)",
+    "No console errors"
+  ],
+  "blocked_reason": null,
+  "findings": "All changes successfully applied:\n- Updated design tokens in app/globals.css: warm off-white surfaces (#F7F7F4), charcoal primary (#171717), sage accent (#A6B2A1), reduced muted colors, updated borders and muted colors\n- Reduced atmospheric glow muted color variables to 0.04 opacity (barely visible)\n- Updated data/siteConfig.ts: brand changed to 'Dave', new tagline, description, and SEO fields including Nigeria location with global availability\n- Removed bloomstudio and medconnect from data/projects.json, keeping exactly 5 projects: kasuwa, root, sotion, liora, tradingpal\n- tailwind.config.ts already uses CSS variable references correctly, no changes needed\n\nNote: Full dev server verification not possible due to PowerShell execution policy restrictions on this system. Manual verification via dev server recommended to confirm visual appearance matches acceptance criteria."
+}

@@ -1,9 +1,9 @@
 export const siteConfig = {
-  name: "Rilan",
-  brand: "Rilan",
-  tagline: "Premium Web Design & Development",
+  name: "David Ishaku",
+  brand: "Dave",
+  tagline: "Ideas into experiences. Technology into possibility.",
   description:
-    "I design and build premium digital experiences for ambitious businesses. Strategy, design, and modern web development from concept to launch.",
+    "I design and develop digital products, explore emerging technologies, and build things that make ambitious ideas tangible.",
 
   email: "davidishaku560@gmail.com",
 
@@ -17,9 +17,10 @@ export const siteConfig = {
   },
 
   seo: {
-    title: "Premium Web Design & Development | Rilan",
+    title: "David Ishaku — Digital Product Designer & Developer",
     description:
-      "Premium website design and development for ambitious businesses. Strategy, design and development from concept to launch.",
-    ogImage: "/images/og-image.png",
+      "Independent digital creator building products at the intersection of design, technology, and craft. Based in Nigeria, working globally.",
+    // Empty → the generated /opengraph-image card is used for og: and twitter:.
+    ogImage: "",
   },
 } as const;

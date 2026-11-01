@@ -20,6 +20,49 @@
     "color": "#0A5C36"
   },
   {
+    "id": "root",
+    "title": "ROOT//NODE",
+    "category": "Offline Cryptography",
+    "description": "A one-shot optical messenger: one device flashes a message as a burst of QR symbols, the other reads it with its camera. No server, no account, no network.",
+    "challenge": "Every 'private' messenger still needs an account, a relay server and a network path that can be observed, logged or blocked.",
+    "approach": "Split each message into 80-byte chunks sealed with AES-GCM under an HKDF-SHA-256 handshake, binding the frame index as additional authenticated data and closing with a SHA-256 trailer. Every symbol is pre-rendered before playback so nothing is encoded mid-flash.",
+    "result": "A working air-gapped channel where a reordered, dropped or spliced frame is rejected instead of silently accepted - shipped with an honest statement of what a browser app cannot protect.",
+    "isConcept": false,
+    "technologies": [
+      "TypeScript",
+      "Web Crypto API",
+      "AES-GCM",
+      "HKDF-SHA-256",
+      "BarcodeDetector"
+    ],
+    "image": "/uploads/project-root.png",
+    "video": "",
+    "url": "https://github.com/RilangumaIshaku/root",
+    "color": "#1F2937"
+  },
+  {
+    "id": "sotion",
+    "title": "Sotion",
+    "category": "Media Forensics",
+    "description": "A file-evidence service for disputed media: it reports what an image file establishes, what the public record says about it, and what no check can establish.",
+    "challenge": "Detector tools promise a true/false verdict on authenticity that the underlying evidence cannot actually support.",
+    "approach": "Built a FastAPI pipeline where every finding is an EvidenceUnit carrying the rule that produced it - EXIF geometry against the pixel buffer, compression evidence, copy-move regions, C2PA signature validity - resolved into a five-value verdict, each with an explicit 'what this establishes / what it does not'.",
+    "result": "A precision-first product with pre-registered evaluation gates: when the general synthetic-detection track failed its validation gates it was closed and documented, rather than shipped as an overclaim.",
+    "isConcept": false,
+    "technologies": [
+      "Python",
+      "FastAPI",
+      "Pillow",
+      "C2PA",
+      "exiftool",
+      "Docker"
+    ],
+    "image": "",
+    "video": "",
+    "url": "",
+    "color": "#4C1D95"
+  },
+  {
     "id": "liora",
     "title": "Liora",
     "category": "AI Legal Research",
@@ -60,47 +103,5 @@
     "video": "",
     "url": "",
     "color": "#0C4A6E"
-  },
-  {
-    "id": "bloomstudio",
-    "title": "Bloom Studio",
-    "category": "Architecture & Design Practice",
-    "description": "A refined digital presence showcasing bespoke design projects with elegant interactions and an editorial layout.",
-    "challenge": "High-end design practices frequently use generic templates that fail to communicate architectural precision and premium positioning.",
-    "approach": "Crafted an editorial digital presence with measured micro-interactions, generous whitespace, and a performant headless architecture.",
-    "result": "A digital experience that establishes immediate prestige and frames bespoke case studies for discerning clients.",
-    "isConcept": true,
-    "conceptLabel": "Concept project — independent design exploration",
-    "technologies": [
-      "Next.js",
-      "Framer Motion",
-      "Sanity CMS",
-      "Vercel"
-    ],
-    "image": "",
-    "video": "",
-    "url": "",
-    "color": "#1C1917"
-  },
-  {
-    "id": "medconnect",
-    "title": "MedConnect",
-    "category": "Telehealth Platform",
-    "description": "A telehealth platform enabling virtual consultations, appointment booking, and secure patient-provider coordination.",
-    "challenge": "Patients seeking specialist healthcare often face intimidating, complex scheduling steps and confusing virtual consultation flows.",
-    "approach": "Designed an empathetic, high-clarity appointment and consultation journey with clear progress states and accessible typography.",
-    "result": "An accessible healthcare interface that builds patient confidence and simplifies virtual consultation coordination.",
-    "isConcept": true,
-    "conceptLabel": "Concept project — independent design exploration",
-    "technologies": [
-      "React",
-      "Node.js",
-      "MongoDB",
-      "WebRTC"
-    ],
-    "image": "",
-    "video": "",
-    "url": "",
-    "color": "#0F766E"
   }
 ]
