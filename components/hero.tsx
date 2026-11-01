@@ -49,35 +49,7 @@ export function Hero({
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Base background */}
-      <div className="absolute inset-0 bg-surface" />
-      {/* Atmospheric lavender/lilac glow behind hero content */}
-      <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] rounded-full blur-[140px]"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(155, 143, 188, 0.18) 0%, rgba(113, 135, 196, 0.08) 40%, transparent 70%)",
-        }}
-      />
-      {/* Warm ivory pool in the center */}
-      <div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[600px] h-[500px] rounded-full blur-[120px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(205, 181, 135, 0.14) 0%, rgba(196, 166, 107, 0.06) 50%, transparent 75%)",
-        }}
-      />
-      {/* Soft blue accent at the top */}
-      <div
-        className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[400px] rounded-full blur-[100px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(113, 135, 196, 0.10) 0%, transparent 70%)",
-        }}
-      />
-      {/* Edge fade to white on outer edges */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/40 pointer-events-none" />
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-surface">
 
       <div className="relative section-container section-padding pt-24 pb-14 md:pt-32 md:pb-24">
         {/* Badge — dynamically loaded from availability.json */}
@@ -119,18 +91,12 @@ export function Hero({
               <>
                 {parts[0]}
                 <span className="relative inline-block">
-                  <span
-                    className="relative z-10"
-                    style={{ color: "var(--accent-lilac)" }}
-                  >
-                    {highlightWord}
-                  </span>
+                  <span className="relative z-10">{highlightWord}</span>
                   <span
                     className="absolute bottom-1 left-0 right-0 h-[2px] rounded-full"
                     style={{
-                      background:
-                        "linear-gradient(90deg, var(--accent-lilac), var(--accent-blue))",
-                      opacity: 0.35,
+                      background: "var(--accent-sage)",
+                      opacity: 0.3,
                     }}
                   />
                 </span>
@@ -161,7 +127,7 @@ export function Hero({
         >
           <button
             onClick={scrollToTarget(hero.ctaPrimaryTarget)}
-            className="inline-flex items-center gap-1.5 h-[34px] px-5 rounded-full bg-[#0a0a0b] text-white text-[12px] font-medium tracking-wide hover:bg-[#1a1a1c] transition-all duration-300 active:scale-[0.98]"
+            className="inline-flex items-center gap-1.5 h-[34px] px-5 rounded-full bg-primary text-white text-[12px] font-medium tracking-wide hover:bg-[#1a1a1c] transition-all duration-300 active:scale-[0.98]"
           >
             {hero.ctaPrimary}
             <ArrowRight

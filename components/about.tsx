@@ -15,20 +15,28 @@ import { CheckCircle2, Globe, Terminal } from "lucide-react";
 
 const PILLARS = [
   {
-    title: "Design with Intent",
-    description: "Interfaces crafted around visual hierarchy, clarity, and conversion—not generic marketplace templates.",
+    title: "Design with purpose",
+    description: "Interfaces built around clarity, hierarchy, and outcomes — not templates or trends.",
   },
   {
-    title: "Production-Grade Engineering",
-    description: "Built with Next.js, React, and TypeScript for speed, security, and long-term maintainability.",
+    title: "Engineering that holds",
+    description: "Modern stack, secure by default, architected for performance and long-term maintenance.",
   },
   {
-    title: "Direct Collaboration",
-    description: "You work directly with the person designing and writing the code. No agency overhead or lost context.",
+    title: "Direct collaboration",
+    description: "You work with the person designing and building. No handoffs, no lost context.",
   },
   {
-    title: "Strategy Through Launch",
-    description: "From initial scoping to responsive QA and deployment, I manage the complete delivery lifecycle.",
+    title: "Full-cycle delivery",
+    description: "From strategy and scoping through deployment and QA — I manage the entire process.",
+  },
+  {
+    title: "Security as default",
+    description: "Auth, access control, and data handling designed to fail closed. Plus independent work in cryptography and media forensics.",
+  },
+  {
+    title: "Clear communication",
+    description: "Honest timelines, plain language, transparent scope — you always know what's being built and why.",
   },
 ];
 
@@ -37,8 +45,11 @@ const TECH_BADGES = [
   "React",
   "TypeScript",
   "Tailwind CSS",
+  "Supabase",
+  "PostgreSQL",
   "Sanity CMS",
   "Node.js",
+  "Python",
   "Vercel",
   "REST & GraphQL",
 ];
@@ -143,7 +154,7 @@ export function About() {
       <div className="section-container section-padding">
         <SectionHeading
           label="About"
-          title="I design and build digital experiences that businesses can be proud to put their name behind."
+          title="Ambitious ideas made tangible."
           description=""
         />
 
@@ -165,18 +176,18 @@ export function About() {
           >
             <div className="space-y-5 text-body leading-[var(--leading-body)]">
               <ScrollProgressiveText
-                text="I combine product thinking, visual design and modern web development to create websites that are clear, fast and built around real business objectives."
+                text="I'm Dave — a digital product designer and developer building at the intersection of design, technology, and craft. I work on products that need to feel as considered as they are functional."
                 progress={paragraphOneProgress}
                 className="font-medium text-body-lg"
               />
               <ScrollProgressiveText
-                text="I work directly with clients from strategy through launch, keeping the process focused, collaborative and straightforward."
+                text="From concept to deployment, I work directly with the people who have the idea — keeping things focused, honest, and built to last."
                 progress={paragraphTwoProgress}
                 className="text-body"
               />
               <div className="pt-2 flex items-center gap-2 text-xs font-medium text-muted-foreground/80">
-                <Globe size={14} className="text-accent-blue/70" />
-                <span>Available for projects worldwide — working remotely with clients everywhere.</span>
+                <Globe size={14} style={{ color: "var(--accent-sage)" }} />
+                <span>Based in Nigeria — working with teams and individuals globally.</span>
               </div>
             </div>
           </motion.div>
@@ -191,7 +202,11 @@ export function About() {
               >
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 size={16} className="text-accent-blue/80 shrink-0" />
+                    <CheckCircle2
+                      size={16}
+                      className="shrink-0"
+                      style={{ color: "var(--accent-sage)" }}
+                    />
                     <h4 className="text-body font-medium text-primary">{pillar.title}</h4>
                   </div>
                   <p className="text-body-sm text-muted-foreground leading-relaxed">
