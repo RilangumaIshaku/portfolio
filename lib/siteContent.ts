@@ -25,6 +25,9 @@ export interface SiteContent {
   hero: {
     headline: string;
     subtitle: string;
+    /** Second intro paragraph — how the work is approached. Optional so older
+     *  saved content keeps working; falls back to `defaults.hero.approach`. */
+    approach?: string;
     ctaPrimary: string;
     ctaSecondary: string;
     ctaPrimaryTarget: string;
@@ -57,22 +60,25 @@ export const defaults: SiteContent = {
     ogImage: siteConfig.seo.ogImage,
   },
   hero: {
-    headline: "Digital experiences built for ambitious businesses.",
+    headline: "I design and build digital experiences shaped by curiosity.",
     subtitle:
-      "I design and develop premium websites that turn attention into trust, credibility and business.",
-    ctaPrimary: "Start a project",
-    ctaSecondary: "View selected work",
+      "I work across product design, frontend development, and emerging technology, turning complex ideas into clear, useful digital experiences.",
+    approach:
+      "I'm interested in the systems behind the interface — how products work, how people use them, and how thoughtful design can make complicated things feel simple.",
+    ctaPrimary: "Work with me",
+    ctaSecondary: "View work",
     ctaPrimaryTarget: "#contact",
     ctaSecondaryTarget: "#work",
   },
   images: {
     profile: "",
     projects: {
-      kasuwa: "",
       liora: "",
+      sotion: "",
+      kasuwa: "",
       tradingpal: "",
-      bloomstudio: "",
-      medconnect: "",
+      rise: "",
+      root: "",
     },
   },
   links: {
@@ -84,7 +90,7 @@ export const defaults: SiteContent = {
  * Ensure an external URL is absolute. The admin panel may save values like
  * "t.me/rilanguma" (no scheme) — without normalization React treats that as
  * a relative path and the link resolves to your own domain, e.g.
- * https://yoursite.com/t.me/rilanguma.
+ * https://<this-site>/t.me/rilanguma.
  */
 function ensureAbsoluteUrl(value: string): string {
   const trimmed = (value || "").trim();
@@ -93,6 +99,64 @@ function ensureAbsoluteUrl(value: string): string {
     return trimmed;
   }
   return `https://${trimmed}`;
+}
+
+/**
+ * The one name/brand this site uses. Content saved before the rename still
+ * says "Rilan" in a few places; it is rewritten on read so the live site can
+ * never drift back to the old name, without discarding admin edits that
+ * already use the new one.
+ */
+export const IDENTITY = {
+  name: "David Ishaku",
+  brand: "David",
+} as const;
+
+// Word-bounded on purpose: handles like "rilanguma" and "RilangumaIshaku"
+// must survive untouched. Fresh literals per call so no regex state leaks.
+function hasLegacyBrand(value: string): boolean {
+  return /\bRilan\b/.test(value || "");
+}
+
+function rewriteLegacyBrand(value: string, replacement: string): string {
+  return (value || "").replace(/\bRilan\b/g, replacement);
+}
+
+function rewriteBranch(value: unknown): unknown {
+  if (typeof value === "string") return rewriteLegacyBrand(value, IDENTITY.brand);
+  if (Array.isArray(value)) return value.map(rewriteBranch);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, child]) => [
+        key,
+        rewriteBranch(child),
+      ])
+    );
+  }
+  return value;
+}
+
+function normalizeIdentity(content: SiteContent): SiteContent {
+  const next = content;
+
+  // Identity fields get the full name, everything else the short wordmark.
+  if (hasLegacyBrand(next.site.name)) next.site.name = IDENTITY.name;
+  if (hasLegacyBrand(next.site.brand)) next.site.brand = IDENTITY.brand;
+  if (hasLegacyBrand(next.seo.title)) {
+    next.seo.title = rewriteLegacyBrand(next.seo.title, IDENTITY.name);
+  }
+  next.site.description = rewriteLegacyBrand(next.site.description, IDENTITY.brand);
+  next.hero.headline = rewriteLegacyBrand(next.hero.headline, IDENTITY.brand);
+  next.hero.subtitle = rewriteLegacyBrand(next.hero.subtitle, IDENTITY.brand);
+  next.seo.description = rewriteLegacyBrand(next.seo.description, IDENTITY.brand);
+
+  // A bare filename like "alien.svg" is not a real asset path and produced a
+  // 404 og:image. Only keep og images that actually point somewhere; an empty
+  // value lets the generated /opengraph-image card take over.
+  const ogImage = (next.seo.ogImage || "").trim();
+  next.seo.ogImage = /^(https?:\/\/|\/)/i.test(ogImage) ? ogImage : "";
+
+  return rewriteBranch(next) as SiteContent;
 }
 
 /**
@@ -114,7 +178,7 @@ function mergeWithDefaults(raw: Partial<SiteContent>): SiteContent {
   for (const key of Object.keys(merged.site.socials) as Array<keyof SiteContent["site"]["socials"]>) {
     merged.site.socials[key] = ensureAbsoluteUrl(merged.site.socials[key]);
   }
-  return merged;
+  return normalizeIdentity(merged);
 }
 
 /**

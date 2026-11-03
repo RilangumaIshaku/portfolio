@@ -2,17 +2,20 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <section className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-display-lg mb-4">404</h1>
-        <p className="text-muted-foreground mb-8">This page doesn&apos;t exist.</p>
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors"
-        >
-          Go Home
+    <div className="shell flex min-h-screen flex-col justify-center py-24">
+      <p className="meta">404</p>
+      <h1 className="display-serif mt-4 text-[2rem] md:text-[2.5rem]">
+        This page doesn&rsquo;t exist.
+      </h1>
+      <p className="mt-3 max-w-[46ch] text-ink-muted">
+        The link may be out of date. Everything I&rsquo;ve made is still on the
+        homepage.
+      </p>
+      <div className="mt-8">
+        <Link href="/" className="pill">
+          Back home
         </Link>
       </div>
-    </section>
+    </div>
   );
 }

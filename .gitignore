@@ -29,6 +29,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local tooling and QA artifacts
+/.logs/
+/.freebuff/
+/.agents/
+/daily-brief/
+/screenshots/
+
 # job-bot
 scripts/job-bot/jobs.db
 scripts/job-bot/jobs.db-journal

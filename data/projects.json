@@ -2,11 +2,16 @@
   {
     "id": "kasuwa",
     "title": "Kasuwa",
-    "category": "Agricultural Marketplace",
-    "description": "A direct-to-buyer agricultural marketplace connecting producers directly with bulk purchasers and consumers.",
-    "challenge": "Agricultural producers struggled with fragmented distribution channels and opaque pricing, while buyers faced inconsistent quality and high communication friction.",
-    "approach": "Architected a direct-to-buyer digital marketplace with structured inventory listings, transparent vendor communication, and an intuitive mobile-first transaction flow.",
-    "result": "A fast, credible marketplace interface engineered to turn casual visits into reliable trading relationships without intermediary bottlenecks.",
+    "year": "2025",
+    "category": "Agricultural marketplace",
+    "status": "Prototype",
+    "tagline": "A direct marketplace for agricultural trade",
+    "description": "A marketplace concept designed to connect agricultural sellers and buyers through a structured digital commerce experience.",
+    "summary": "Agricultural producers often sell through fragmented channels at opaque prices, while buyers absorb the cost of inconsistent quality and slow negotiation. Kasuwa is a prototype that gives both sides the same structure: listings with real quantities and grades, transparent pricing, and a transaction flow designed for a phone on a farm rather than a desk in an office.",
+    "role": "Product design, frontend development",
+    "challenge": "Fragmented distribution and opaque pricing on the producer side, inconsistent quality and slow negotiation on the buyer side.",
+    "approach": "Structured listings, transparent vendor communication and a mobile-first transaction flow built around the way trade actually happens.",
+    "result": "A working interface prototype that turns an informal sale into a legible, repeatable transaction.",
     "isConcept": false,
     "technologies": [
       "Next.js",
@@ -15,18 +20,135 @@
       "PostgreSQL"
     ],
     "image": "/uploads/project-kasuwa-image-1787472764271.png",
+    "gallery": [
+      {
+        "src": "/uploads/project-kasuwa-image-1787472764271.png",
+        "caption": "Interface overview"
+      }
+    ],
     "video": "",
     "url": "",
     "color": "#0A5C36"
   },
   {
+    "id": "liora",
+    "title": "Liora",
+    "year": "2025",
+    "category": "Legal technology",
+    "status": "In development",
+    "tagline": "Legal research and document review in one surface",
+    "description": "A legal technology platform exploring legal research, document review, intelligence and decision support through a unified product experience.",
+    "summary": "Liora started from a simple observation: legal work is not short of information, it is short of a way to hold it together. Research, statutes, filings and internal documents live in separate tools, so the work becomes a sequence of context switches. The platform puts research, review and decision support in one workspace organised around the matter rather than the tool. I designed the information architecture and interaction model, and built the front end for the research and review surfaces.",
+    "role": "Product design, interface engineering",
+    "challenge": "Legal teams cross-referencing multiple jurisdictions spend more time re-establishing context than reading.",
+    "approach": "A single workspace organised around the matter, with research, review and decision support sharing one navigation model and one citation format.",
+    "result": "A high-density interface that keeps citations, documents and reasoning in view at the same time.",
+    "isConcept": false,
+    "technologies": [
+      "React",
+      "TypeScript",
+      "Python",
+      "FastAPI"
+    ],
+    "image": "",
+    "gallery": [],
+    "video": "",
+    "url": "",
+    "color": "#3B0764"
+  },
+  {
+    "id": "sotion",
+    "title": "Sotion",
+    "year": "2025",
+    "category": "Digital media forensics",
+    "status": "In development",
+    "tagline": "Evidence instead of verdicts for disputed media",
+    "description": "An early-stage digital media forensics project focused on image verification, reproducible evidence and layered media analysis.",
+    "summary": "Most authenticity tools promise a true or false answer, which is more than the underlying evidence can support. Sotion reports three things instead: what a file establishes, what the public record says about it, and what no available check can establish. Every finding is an evidence unit carrying the rule that produced it, resolved into a verdict with an explicit statement of its limits. When the general synthetic-detection track failed its pre-registered validation gates, it was closed and documented rather than shipped as an overclaim.",
+    "role": "Product direction, design, frontend",
+    "challenge": "Detector tools present a true or false verdict that the underlying evidence cannot support.",
+    "approach": "A pipeline where every finding carries the rule that produced it, from EXIF geometry to compression evidence, copy-move regions and C2PA signature validity.",
+    "result": "A precision-first product with published evaluation gates and an honest account of what each check does not prove.",
+    "isConcept": false,
+    "technologies": [
+      "Python",
+      "FastAPI",
+      "Pillow",
+      "C2PA",
+      "Docker"
+    ],
+    "image": "",
+    "gallery": [],
+    "video": "",
+    "url": "",
+    "color": "#4C1D95"
+  },
+  {
+    "id": "tradingpal",
+    "title": "TradingPal",
+    "year": "2024",
+    "category": "Fintech",
+    "status": "Experiment",
+    "tagline": "Positions, risk and market context in one interface",
+    "description": "An exploration of trading workflows, market information, risk management and trading tools within a unified interface.",
+    "summary": "An independent exploration of what a trader needs in the first three seconds of looking at a screen: what is open, what is exposed, and what changed. TradingPal gathers market data, positions and risk into a single hierarchy instead of a wall of widgets, and studies how much information can be removed before a decision becomes harder to make.",
+    "role": "Concept, design and prototype",
+    "challenge": "Trading interfaces tend to optimise for data volume, which obscures the few signals that change a decision.",
+    "approach": "A strict visual hierarchy for positions, exposure and market context, with charts and metrics sharing one reading order.",
+    "result": "A design study in reducing a dashboard to the information a decision actually needs.",
+    "isConcept": true,
+    "conceptLabel": "Concept project — independent design exploration",
+    "technologies": [
+      "Next.js",
+      "TypeScript",
+      "WebSocket",
+      "Chart.js"
+    ],
+    "image": "",
+    "gallery": [],
+    "video": "",
+    "url": "",
+    "color": "#0C4A6E"
+  },
+  {
+    "id": "rise",
+    "title": "Rise",
+    "year": "2024",
+    "category": "Interactive experiences",
+    "status": "Concept",
+    "tagline": "A life simulation where the economy pushes back",
+    "description": "An interactive life-simulation game concept exploring virtual economies, world-building and player-driven experiences.",
+    "summary": "Rise is a game concept about consequence. Instead of a world that waits for the player, the world keeps running: prices move, work dries up, relationships decay. The design question is how much simulation a player can feel without reading numbers, so most of the state is expressed through the environment and the people in it rather than through a panel.",
+    "role": "Concept, systems and interface design",
+    "challenge": "Life simulations often surface their systems as spreadsheets, which turns play into administration.",
+    "approach": "Simulated economies and relationships expressed through place, routine and dialogue instead of stat panels.",
+    "result": "A world-building concept and interface direction for a player-driven economy.",
+    "isConcept": true,
+    "conceptLabel": "Concept project — independent design exploration",
+    "technologies": [
+      "Systems design",
+      "Narrative design",
+      "UI prototyping"
+    ],
+    "image": "",
+    "gallery": [],
+    "video": "",
+    "url": "",
+    "color": "#7C2D12"
+  },
+  {
     "id": "root",
     "title": "ROOT//NODE",
-    "category": "Offline Cryptography",
+    "year": "2025",
+    "category": "Applied cryptography",
+    "status": "Completed",
+    "tagline": "A messenger with no network at all",
     "description": "A one-shot optical messenger: one device flashes a message as a burst of QR symbols, the other reads it with its camera. No server, no account, no network.",
-    "challenge": "Every 'private' messenger still needs an account, a relay server and a network path that can be observed, logged or blocked.",
-    "approach": "Split each message into 80-byte chunks sealed with AES-GCM under an HKDF-SHA-256 handshake, binding the frame index as additional authenticated data and closing with a SHA-256 trailer. Every symbol is pre-rendered before playback so nothing is encoded mid-flash.",
-    "result": "A working air-gapped channel where a reordered, dropped or spliced frame is rejected instead of silently accepted - shipped with an honest statement of what a browser app cannot protect.",
+    "summary": "Every private messenger still needs an account, a relay server and a network path that can be observed, logged or blocked. ROOT//NODE removes all three. Each message is split into 80-byte chunks sealed with AES-GCM under an HKDF-SHA-256 handshake, with the frame index bound as additional authenticated data and a SHA-256 trailer closing the stream, so a dropped, reordered or spliced frame is rejected instead of silently accepted. Every symbol is rendered before playback begins, so nothing is encoded mid-flash.",
+    "role": "Design and engineering",
+    "challenge": "Private messaging still depends on accounts, relay servers and a network path that can be watched or blocked.",
+    "approach": "Chunked, authenticated payloads carried as a pre-rendered sequence of QR symbols between two screens and two cameras.",
+    "result": "A working air-gapped channel shipped alongside an honest statement of what a browser application cannot protect.",
     "isConcept": false,
     "technologies": [
       "TypeScript",
@@ -36,72 +158,14 @@
       "BarcodeDetector"
     ],
     "image": "/uploads/project-root.png",
+    "gallery": [
+      {
+        "src": "/uploads/project-root.png",
+        "caption": "Sending a sealed message as an optical burst"
+      }
+    ],
     "video": "",
     "url": "https://github.com/RilangumaIshaku/root",
     "color": "#1F2937"
-  },
-  {
-    "id": "sotion",
-    "title": "Sotion",
-    "category": "Media Forensics",
-    "description": "A file-evidence service for disputed media: it reports what an image file establishes, what the public record says about it, and what no check can establish.",
-    "challenge": "Detector tools promise a true/false verdict on authenticity that the underlying evidence cannot actually support.",
-    "approach": "Built a FastAPI pipeline where every finding is an EvidenceUnit carrying the rule that produced it - EXIF geometry against the pixel buffer, compression evidence, copy-move regions, C2PA signature validity - resolved into a five-value verdict, each with an explicit 'what this establishes / what it does not'.",
-    "result": "A precision-first product with pre-registered evaluation gates: when the general synthetic-detection track failed its validation gates it was closed and documented, rather than shipped as an overclaim.",
-    "isConcept": false,
-    "technologies": [
-      "Python",
-      "FastAPI",
-      "Pillow",
-      "C2PA",
-      "exiftool",
-      "Docker"
-    ],
-    "image": "",
-    "video": "",
-    "url": "",
-    "color": "#4C1D95"
-  },
-  {
-    "id": "liora",
-    "title": "Liora",
-    "category": "AI Legal Research",
-    "description": "A multi-jurisdictional AI legal research platform designed to streamline complex legal analysis across different regions.",
-    "challenge": "Legal teams cross-referencing multi-jurisdictional precedents spend excessive time parsing dense documentation and rigid legacy databases.",
-    "approach": "Designed a distraction-free research workspace prioritizing typographic clarity, contextual citations, and structured query workflows.",
-    "result": "A high-density research interface designed to reduce cognitive fatigue and accelerate multi-jurisdiction statutory analysis.",
-    "isConcept": true,
-    "conceptLabel": "Concept project — independent design exploration",
-    "technologies": [
-      "React",
-      "Python",
-      "OpenAI API",
-      "FastAPI"
-    ],
-    "image": "",
-    "video": "",
-    "url": "",
-    "color": "#3B0764"
-  },
-  {
-    "id": "tradingpal",
-    "title": "TradingPal",
-    "category": "Fintech & Analytics",
-    "description": "A modern financial interface with real-time data visualization, portfolio tracking, and a clean analytical dashboard.",
-    "challenge": "Traders are often overwhelmed by cluttered interfaces that obscure high-priority market signals and delay critical execution.",
-    "approach": "Engineered a low-latency interface with strict visual hierarchy, customizable real-time charts, and clean portfolio metrics.",
-    "result": "A streamlined financial dashboard delivering real-time clarity and dependable data visualization across desktop and mobile screens.",
-    "isConcept": true,
-    "conceptLabel": "Concept project — independent design exploration",
-    "technologies": [
-      "Next.js",
-      "TypeScript",
-      "Chart.js",
-      "WebSocket"
-    ],
-    "image": "",
-    "video": "",
-    "url": "",
-    "color": "#0C4A6E"
   }
 ]

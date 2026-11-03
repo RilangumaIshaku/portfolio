@@ -1,9 +1,9 @@
 {
   "site": {
-    "name": "Rilan",
-    "brand": "Rilan",
-    "tagline": "Premium Web Design & Development",
-    "description": "I design and build premium digital experiences for ambitious businesses. Strategy, design, and modern web development from concept to launch.",
+    "name": "David Ishaku",
+    "brand": "David",
+    "tagline": "Product design & frontend engineering",
+    "description": "I design and build digital experiences shaped by curiosity — working across product design, frontend development and emerging technology.",
     "email": "davidishaku560@gmail.com",
     "telegram": "https://t.me/rilanguma",
     "socials": {
@@ -13,27 +13,28 @@
     }
   },
   "seo": {
-    "title": "Premium Web Design & Development | Rilan",
-    "description": "Premium website design and development for ambitious businesses. Strategy, design and development from concept to launch.",
-    "ogImage": "alien.svg"
+    "title": "David Ishaku — Product Designer & Frontend Engineer",
+    "description": "I design and build digital experiences shaped by curiosity — working across product design, frontend development and emerging technology.",
+    "ogImage": ""
   },
   "hero": {
-    "headline": "Digital experiences built for ambitious businesses.",
-    "subtitle": "I design and develop premium websites that turn attention into trust, credibility and business.",
-    "ctaPrimary": "Start a project",
-    "ctaSecondary": "View selected work",
+    "headline": "I design and build digital experiences shaped by curiosity.",
+    "subtitle": "I work across product design, frontend development, and emerging technology, turning complex ideas into clear, useful digital experiences.",
+    "approach": "I'm interested in the systems behind the interface — how products work, how people use them, and how thoughtful design can make complicated things feel simple.",
+    "ctaPrimary": "Work with me",
+    "ctaSecondary": "View work",
     "ctaPrimaryTarget": "#contact",
     "ctaSecondaryTarget": "#work"
   },
   "images": {
     "profile": "",
     "projects": {
-      "kasuwa": "/uploads/project-kasuwa-1787472899158.png",
       "liora": "",
+      "sotion": "",
+      "kasuwa": "/uploads/project-kasuwa-image-1787472764271.png",
       "tradingpal": "",
-      "bloomstudio": "",
-      "medconnect": "",
-      "kasuwa-image": "/uploads/project-kasuwa-image-1787472764271.png"
+      "rise": "",
+      "root": "/uploads/project-root.png"
     }
   },
   "links": {

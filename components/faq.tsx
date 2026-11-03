@@ -1,84 +1,72 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useContentData } from "@/lib/useContentData";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { Plus, Minus } from "lucide-react";
-import { StaggerContainer, StaggerItem } from "@/components/ui/animated-section";
+import { SectionLabel } from "@/components/section-label";
 
-export function FAQ({ initialData }: { initialData?: any[] } = {}) {
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+/**
+ * Accordion built on hairlines and a CSS grid transition — the open state is
+ * the only motion on the page, and it stays under 300ms.
+ */
+export function FAQ({ items }: { items: FaqItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { data } = useContentData({ faq: initialData });
-  const faqs = data.faq;
 
-  if (faqs.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
-    <section className="section-spacing bg-surface">
-      <div className="section-container section-padding">
-        <SectionHeading
-          label="FAQ"
-          title="Frequently asked questions"
-          description="Everything you need to know before we start working together."
-        />
+    <section id="faq" className="mt-20 scroll-mt-16 md:mt-24">
+      <SectionLabel>FAQ.</SectionLabel>
 
-        <div className="max-w-2xl mx-auto">
-          <StaggerContainer className="space-y-0" staggerDelay={0.05}>
-            {faqs.map((faq: any, i: number) => (
-              <StaggerItem key={i}>
-                <div className="border-b border-border">
-                  <button
-                    onClick={() =>
-                      setOpenIndex(openIndex === i ? null : i)
-                    }
-                    className="flex items-center justify-between w-full py-4 text-left gap-4 group"
-                    aria-expanded={openIndex === i}
+      <div className="mt-7">
+        {items.map((item, index) => {
+          const isOpen = openIndex === index;
+          const panelId = `faq-panel-${index}`;
+          const buttonId = `faq-button-${index}`;
+
+          return (
+            <div key={item.question} className="border-b border-rule">
+              <h3>
+                <button
+                  id={buttonId}
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="group flex w-full items-start justify-between gap-6 py-5 text-left"
+                >
+                  <span className="text-title leading-snug text-ink transition-colors group-hover:text-ink-soft">
+                    {item.question}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="relative mt-1.5 h-3 w-3 shrink-0 text-ink-faint transition-transform duration-300"
+                    style={{ transform: isOpen ? "rotate(45deg)" : "none" }}
                   >
-                    <span className="text-body font-medium text-primary group-hover:text-primary/80 transition-colors">
-                      {faq.question}
-                    </span>
-                    <motion.span
-                      className="shrink-0"
-                      style={{
-                        color:
-                          openIndex === i
-                            ? "rgba(111, 134, 199, 0.5)"
-                            : "rgba(120, 113, 108, 0.5)",
-                      }}
-                      animate={{ rotate: openIndex === i ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {openIndex === i ? (
-                        <Minus size={16} />
-                      ) : (
-                        <Plus size={16} />
-                      )}
-                    </motion.span>
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {openIndex === i && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{
-                          height: { duration: 0.3, ease: [0.23, 1, 0.32, 1] },
-                          opacity: { duration: 0.2 },
-                        }}
-                        className="overflow-hidden"
-                      >
-                        <p className="text-body-sm leading-[var(--leading-body)] text-muted-foreground pb-4">
-                          {faq.answer}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                    <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-current" />
+                    <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-current" />
+                  </span>
+                </button>
+              </h3>
+
+              <div
+                id={panelId}
+                role="region"
+                aria-labelledby={buttonId}
+                aria-hidden={!isOpen}
+                className="accordion-panel"
+                data-open={isOpen}
+              >
+                <div>
+                  <p className="pb-6 pr-8 text-ink-muted">{item.answer}</p>
                 </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

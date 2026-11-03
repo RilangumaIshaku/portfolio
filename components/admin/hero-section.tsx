@@ -44,6 +44,16 @@ export function HeroSection({
             rows={3}
           />
         </Field>
+        <Field
+          label="Second paragraph"
+          hint="How you approach the work — shown under the subtitle"
+        >
+          <TextArea
+            value={data.approach ?? ""}
+            onChange={(v) => u("approach", v)}
+            rows={3}
+          />
+        </Field>
       </Card>
       <Card>
         <p className="text-[11px] text-white/20 uppercase tracking-[0.1em] font-medium mb-3">

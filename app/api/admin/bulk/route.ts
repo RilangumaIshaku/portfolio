@@ -27,9 +27,9 @@ interface SiteContent {
 
 const defaultContent: SiteContent = {
   site: {
-    name: "Rilan",
-    brand: "Rilan",
-    tagline: "Freelance Web Developer",
+    name: "David Ishaku",
+    brand: "David",
+    tagline: "Web Developer & Designer",
     description:
       "I design and develop fast, modern, responsive websites for businesses and startups.",
     email: "davidishaku560@gmail.com",
@@ -41,12 +41,12 @@ const defaultContent: SiteContent = {
     },
   },
   seo: {
-    title: "Rilan — Freelance Web Developer",
+    title: "David Ishaku — Web Developer & Designer",
     description: "Freelance web developer crafting modern, responsive websites.",
-    ogImage: "/images/og-image.png",
+    ogImage: "",
   },
   hero: {
-    headline: "Hey, I'm Rilan. I design premium & high-converting experiences.",
+    headline: "Hey, I'm David. I design premium & high-converting experiences.",
     subtitle:
       "Designing and developing fast, modern, responsive websites for businesses and startups that want to stand out and convert.",
     ctaPrimary: "Start a Project",

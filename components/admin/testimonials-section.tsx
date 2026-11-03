@@ -7,6 +7,7 @@ import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
+import { isPublishedTestimonial } from "@/data/testimonials";
 import {
   Field,
   Input,
@@ -40,14 +41,15 @@ export function TestimonialsSection({
     setList(n);
   };
   const add = () => {
+    // Starts empty on purpose: a card with no real quote and name is not
+    // rendered on the live site, so nothing placeholder-looking can ship.
     const n = [
       ...list,
       {
-        quote: "Your testimonial here.",
-        name: "Client Name",
-        role: "Role / Company",
+        quote: "",
+        name: "",
+        role: "",
         image: "",
-        isPlaceholder: true,
       },
     ];
     setList(n);
@@ -84,6 +86,7 @@ export function TestimonialsSection({
         </h1>
         <p className="text-sm text-white/30 mt-1">
           Client quotes in the marquee. Upload avatar images for each person.
+          Entries without a real quote and name stay hidden on the live site.
         </p>
       </div>
       {list.map((item: any, i: number) => (
@@ -108,6 +111,11 @@ export function TestimonialsSection({
             <span className="text-[11px] text-white/20 font-mono">
               #{i + 1}
             </span>
+            {!isPublishedTestimonial(item) && (
+              <span className="text-[10px] uppercase tracking-wider text-amber-300/60 border border-amber-300/20 rounded px-1.5 py-0.5">
+                Hidden
+              </span>
+            )}
             <button
               onClick={() => setExpanded(expanded === i ? null : i)}
               className="flex-1 text-left text-sm text-white/60 hover:text-white/80 truncate"

@@ -1,32 +1,32 @@
 [
   {
-    "title": "Strategy & UX",
-    "description": "Understanding your business, audience and objectives before anything is designed.",
-    "icon": "Layers"
-  },
-  {
-    "title": "Web Design",
-    "description": "Clear, considered interfaces designed around your brand and business goals.",
+    "title": "Product design",
+    "description": "Interfaces, flows and interaction models shaped around the work people are actually doing, not around the features that happen to exist.",
     "icon": "Layout"
   },
   {
-    "title": "Web Development",
-    "description": "Fast, responsive and maintainable websites built for the modern web.",
+    "title": "Frontend engineering",
+    "description": "Production interfaces in React, TypeScript and Next.js — fast, accessible, and maintainable by whoever inherits them next.",
     "icon": "Globe"
   },
   {
-    "title": "CMS & Content",
-    "description": "Flexible content systems that make managing your website straightforward.",
-    "icon": "Hexagon"
+    "title": "Design systems",
+    "description": "Type, spacing, colour and component decisions written down and encoded, so a product keeps its coherence as it grows.",
+    "icon": "Layers"
   },
   {
-    "title": "Performance",
-    "description": "Fast-loading experiences engineered for real-world devices and networks.",
+    "title": "Applied AI & emerging technology",
+    "description": "Prototypes that find out what a new capability is genuinely good for, and what it should not be trusted with.",
+    "icon": "Sparkles"
+  },
+  {
+    "title": "Prototyping",
+    "description": "Working prototypes in place of static mockups, so a decision is made against something you can use.",
     "icon": "Zap"
   },
   {
-    "title": "Ongoing Support",
-    "description": "Maintenance, improvements and technical support beyond launch.",
-    "icon": "Package"
+    "title": "Product strategy",
+    "description": "Scoping, sequencing and the trade-offs that decide what ships first and what waits until the evidence is better.",
+    "icon": "Target"
   }
 ]

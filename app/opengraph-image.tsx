@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 
+export const alt = "David Ishaku — Product designer and frontend engineer";
 export const size = {
   width: 1200,
   height: 630,
@@ -11,48 +12,51 @@ export default function Image() {
     (
       <div
         style={{
-          background: "#0a0a0b",
+          background: "#ffffff",
           width: "100%",
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "white",
+          justifyContent: "space-between",
+          padding: 72,
           fontFamily: "system-ui, sans-serif",
-          padding: 60,
+          color: "#171717",
         }}
       >
         <div
           style={{
-            fontSize: 64,
-            fontWeight: 700,
-            letterSpacing: "-0.03em",
-            lineHeight: 1.1,
-            textAlign: "center",
-            marginBottom: 24,
+            fontSize: 20,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "#98988f",
           }}
         >
-          Rilan
+          David Ishaku
         </div>
+
         <div
           style={{
-            fontSize: 28,
-            color: "#a1a1aa",
-            textAlign: "center",
+            fontSize: 60,
+            fontWeight: 600,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.12,
+            maxWidth: 900,
           }}
         >
-          Freelance Web Developer
+          I design and build digital experiences shaped by curiosity.
         </div>
+
         <div
           style={{
-            position: "absolute",
-            bottom: 60,
-            fontSize: 18,
-            color: "#2563eb",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            fontSize: 22,
+            color: "#6f6f69",
           }}
         >
-          Modern Websites for Businesses
+          <span>Product design · Frontend engineering</span>
+          <span>davidishaku560@gmail.com</span>
         </div>
       </div>
     ),

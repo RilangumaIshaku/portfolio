@@ -4,94 +4,62 @@
 
 /* ================================
    Design Tokens
+   Quiet, editorial, light-only.
    ================================ */
 
 :root {
-  /* Primary — charcoal */
-  --color-primary: #171717;
-  --color-primary-foreground: #fafafa;
+  /* Text */
+  --ink: #171717;
+  --ink-soft: #3d3d3a;
+  --ink-muted: #6f6f69;
+  --ink-faint: #98988f;
 
-  /* Secondary */
-  --color-secondary: #18181b;
-  --color-secondary-foreground: #fafafa;
+  /* Surfaces */
+  --paper: #ffffff;
+  --panel: #f4f4f1;
+  --panel-warm: #f2ede4;
+  --rule: #e7e7e2;
 
-  /* Accent — warm, refined near-monochrome */
-  --color-accent: #292524;
-  --color-accent-foreground: #ffffff;
-  --color-accent-hover: #1c1917;
-  --color-accent-muted: rgba(41, 37, 36, 0.06);
+  /* Actions */
+  --pill: #111111;
+  --pill-hover: #000000;
+  --pill-foreground: #ffffff;
 
-  /* Sophisticated accent palette — quiet confidence */
-  --accent-blue: #7187C4;
-  --accent-lilac: #9B8FBC;
-  --accent-sage: #A6B2A1;
-  --accent-coral: #C98B7C;
-  --accent-amber: #C4A66B;
-  --accent-teal: #729B98;
-
-  /* Muted versions for backgrounds / atmospheres — barely visible */
-  --accent-blue-muted: rgba(113, 135, 196, 0.04);
-  --accent-lilac-muted: rgba(155, 143, 188, 0.04);
-  --accent-sage-muted: rgba(166, 178, 161, 0.04);
-  --accent-coral-muted: rgba(201, 139, 124, 0.04);
-  --accent-amber-muted: rgba(196, 166, 107, 0.04);
-  --accent-teal-muted: rgba(114, 155, 152, 0.04);
-  --accent-warm-muted: rgba(205, 181, 135, 0.04);
-
-  /* Muted — warm off-white */
-  --color-muted: #EFEFEC;
-  --color-muted-foreground: #777873;
-
-  /* Border — warm, subtle */
-  --color-border: #E4E4E0;
-
-  /* Surfaces — warm off-white */
-  --color-surface: #F7F7F4;
-  --color-surface-elevated: #FFFFFF;
+  /* Accent — used sparingly, never decorative */
+  --focus: #111111;
 
   /* ================================
-     Typography Tokens
+     Typography
      ================================ */
 
-  /* Font families — Apple system stack: SF Pro on Apple devices,
-     high-quality metric-compatible fallbacks elsewhere */
-  --font-primary: "SF Pro Display", "SF Pro Text", "SF Pro", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    system-ui, sans-serif;
+  --font-body: "Inter Variable", "Inter", "SF Pro Text", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui,
+    sans-serif;
+  --font-display: "Instrument Serif", ui-serif, "Iowan Old Style",
+    "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --font-code: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
 
-  /* Font weights */
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  /* Body copy: 17px on phones, 19px from tablets up — the reference's rhythm */
+  --text-body: clamp(1.0625rem, 0.875rem + 0.42vw, 1.1875rem);
+  --text-small: 0.9375rem; /* 15px */
+  --text-meta: 0.8125rem; /* 13px */
+  --text-micro: 0.75rem; /* 12px */
+  --text-title: clamp(1.125rem, 1rem + 0.3vw, 1.1875rem);
 
-  /* Font sizes — responsive via clamp */
-  --text-display-xl: clamp(2.25rem, 0.375rem + 2.8125vw, 4.5rem); /* 36-72px */
-  --text-display-lg: clamp(1.875rem, 0.5rem + 1.375vw, 3rem);        /* 30-48px */
-  --text-display-md: clamp(1.25rem, 0.125rem + 1.125vw, 1.625rem); /* 20-26px */
-  --text-display-sm: clamp(1rem, 0.5rem + 0.5vw, 1.125rem);       /* 16-18px */
-  --text-body: 1rem;                                                 /* 16px */
-  --text-body-sm: 0.875rem;                                          /* 14px */
-  --text-caption: 0.75rem;                                           /* 12px */
-  --text-label: 0.6875rem;                                           /* 11px */
-  --text-nav: 0.8125rem;                                             /* 13px */
-  --text-button: 0.8125rem;                                          /* 13px */
+  --leading-body: 1.62;
+  --leading-tight: 1.28;
 
-  /* Line heights */
-  --leading-display: 1.08;
-  --leading-heading: 1.25;
-  --leading-body: 1.55;
-  --leading-tight: 1.3;
+  --tracking-tight: -0.011em;
+  --tracking-meta: 0.07em;
 
-  /* Letter spacing */
-  --tracking-display: -0.035em;
-  --tracking-heading: -0.02em;
-  --tracking-body: 0em;
-  --tracking-label: 0.1em;
+  /* Layout — the reference's single restrained column */
+  --measure: 856px;
+  --gutter: 1.5rem;
 }
 
 /* ================================
-   Base Styles
+   Base
    ================================ */
 
 * {
@@ -102,77 +70,33 @@
 
 html {
   scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  color: var(--color-primary);
-  background: var(--color-surface);
-  font-family: var(--font-primary);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
   font-size: var(--text-body);
-  font-weight: var(--font-weight-regular);
+  font-weight: 400;
   line-height: var(--leading-body);
-  letter-spacing: var(--tracking-body);
+  letter-spacing: var(--tracking-tight);
+  font-feature-settings: "cv05" 1, "cv11" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 ::selection {
-  background-color: var(--color-accent);
-  color: white;
+  background: var(--ink);
+  color: var(--paper);
 }
-
-/* ================================
-   Typography Base (semantic)
-   ================================ */
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-primary);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-display);
-  color: var(--color-primary);
-}
-
-h1 {
-  font-size: var(--text-display-xl);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-display);
-}
-
-h2 {
-  font-size: var(--text-display-lg);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-heading);
-}
-
-h3 {
-  font-size: var(--text-display-md);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-heading);
-}
-
-p {
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-}
-
-/* ================================
-   Focus Styles (Accessibility)
-   ================================ */
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
-
-/* ================================
-   Reduced Motion
-   ================================ */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -185,195 +109,135 @@ p {
   }
 }
 
-/* ================================
-   Scrollbar
-   ================================ */
-
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #d6d3d1;
-  border-radius: 3px;
+  background: #e2e2dd;
+  border-radius: 999px;
+  border: 3px solid #ffffff;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a29e;
+  background: #cfcfc8;
 }
 
 /* ================================
-   Carousel Animations
-   ================================ */
-
-@keyframes fadeSlideRight {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeSlideLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(32px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ================================
-   Liquid Glass — iOS 26 inspired
-   ================================ */
-
-
-.liquid-glass {
-  position: relative;
-  background: rgba(250, 250, 249, 0.55);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow:
-    0 0 0 0.5px rgba(0, 0, 0, 0.04),
-    0 1px 2px rgba(0, 0, 0, 0.02),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
-}
-
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.08) 40%,
-    rgba(255, 255, 255, 0) 60%,
-    rgba(0, 0, 0, 0.02) 100%
-  );
-  pointer-events: none;
-}
-
-.liquid-glass::after {
-  content: '';
-  position: absolute;
-  top: 0.5px;
-  left: 8%;
-  right: 8%;
-  height: 0.5px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.8) 30%,
-    rgba(255, 255, 255, 0.9) 50%,
-    rgba(255, 255, 255, 0.8) 70%,
-    transparent
-  );
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-/* ================================
-   Dark button text override — force white on dark backgrounds
-   ================================ */
-
-.btn-dark,
-.bg-\[\#0a0a0b\],
-.bg-\[\#000000\],
-.bg-primary {
-  color: #ffffff !important;
-}
-
-.btn-dark:hover,
-.bg-\[\#0a0a0b\]:hover,
-.bg-\[\#000000\]:hover,
-.bg-primary:hover {
-  color: #ffffff !important;
-}
-
-.btn-dark:focus-visible,
-.bg-\[\#0a0a0b\]:focus-visible,
-.bg-\[\#000000\]:focus-visible,
-.bg-primary:focus-visible {
-  color: #ffffff !important;
-}
-
-.btn-dark:active,
-.bg-\[\#0a0a0b\]:active,
-.bg-\[\#000000\]:active,
-.bg-primary:active {
-  color: #ffffff !important;
-}
-
-.btn-dark:disabled,
-.bg-\[\#0a0a0b\]:disabled,
-.bg-\#000000\]:disabled,
-.bg-primary:disabled {
-  color: #ffffff !important;
-}
-
-/* ================================
-   Section padding utility
+   Layout primitives
    ================================ */
 
 @layer components {
-  .section-padding {
-    @apply px-5 sm:px-8 lg:px-12 xl:px-0;
+  .shell {
+    width: 100%;
+    max-width: calc(var(--measure) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
   }
 
-  .section-container {
-    @apply mx-auto max-w-7xl;
+  /* A single hairline used to carry section labels */
+  .rule {
+    height: 1px;
+    flex: 1 1 auto;
+    background: var(--rule);
   }
 
-  .section-spacing {
-    @apply py-16 md:py-24;
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    padding-inline: 1.125rem;
+    border-radius: 999px;
+    background: var(--pill);
+    color: var(--pill-foreground);
+    font-size: var(--text-meta);
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1;
+    white-space: nowrap;
+    transition: background-color 160ms ease, transform 160ms ease;
+  }
+  .pill:hover {
+    background: var(--pill-hover);
+  }
+  .pill:active {
+    transform: scale(0.985);
+  }
+
+  /* Inline text link: underlined, darkens on hover */
+  .link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: #c9c9c2;
+    transition: text-decoration-color 160ms ease, color 160ms ease;
+  }
+  .link:hover {
+    text-decoration-color: var(--ink);
+  }
+
+  .meta {
+    font-family: var(--font-code);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .display-serif {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    color: var(--ink);
   }
 }
 
-/* Accent underline utility for section labels */
-.accent-underline {
+/* ================================
+   Media
+   ================================ */
+
+.frame {
   position: relative;
-  display: inline-block;
-}
-.accent-underline::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 1.5px;
-  background: var(--accent-blue);
-  opacity: 0.4;
-  border-radius: 1px;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--rule);
 }
 
-/* Subtle hover lift for interactive elements */
-.hover-lift {
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+.frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.06);
+
+.frame-hover:hover .frame img {
+  transform: scale(1.012);
+}
+
+/* Accordion body — grid trick keeps the animation cheap and avoids JS height math */
+.accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.accordion-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.accordion-panel > div {
+  overflow: hidden;
+}
+
+/* ================================
+   Admin — isolated dark surfaces
+   ================================ */
+
+.admin-surface {
+  background: #0c0c0c;
+  color: #ededed;
 }

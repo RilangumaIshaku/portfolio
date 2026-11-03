@@ -12,6 +12,7 @@ export interface SiteContent {
   hero: {
     headline: string;
     subtitle: string;
+    approach?: string;
     ctaPrimary: string;
     ctaSecondary: string;
     ctaPrimaryTarget: string;
@@ -31,9 +32,10 @@ export interface AvailabilityData {
 export const PROJECT_IDS = [
   "kasuwa",
   "liora",
+  "sotion",
   "tradingpal",
-  "bloomstudio",
-  "medconnect",
+  "rise",
+  "root",
 ];
 
 export const ICON_OPTIONS = [

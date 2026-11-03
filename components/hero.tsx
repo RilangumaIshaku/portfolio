@@ -1,157 +1,64 @@
-"use client";
+import type { SiteContent } from "@/lib/siteContent";
 
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { PortfolioShowcase } from "@/components/portfolio-showcase";
+/**
+ * The introduction: name, one positioning line, two short paragraphs, and the
+ * places to find me. Deliberately small — no display type, no illustration.
+ */
+export function Introduction({ content }: { content: SiteContent }) {
+  const { site, hero } = content;
 
-interface HeroContent {
-  headline: string;
-  subtitle: string;
-  ctaPrimary: string;
-  ctaSecondary: string;
-  ctaPrimaryTarget: string;
-  ctaSecondaryTarget: string;
-}
-
-interface AvailabilityData {
-  isAvailable: boolean;
-  status: string;
-  color: "green" | "yellow" | "red";
-}
-
-interface ProjectsData {
-  projects: any[];
-}
-
-const COLOR_MAP = {
-  green: "#22c55e",
-  yellow: "#eab308",
-  red: "#ef4444",
-} as const;
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0 },
-};
-
-export function Hero({
-  availability,
-  hero,
-  projects,
-}: {
-  availability: AvailabilityData;
-  hero: HeroContent;
-  projects?: any[];
-}) {
-  const scrollToTarget = (target: string) => (e: React.MouseEvent) => {
-    e.preventDefault();
-    document.querySelector(target)?.scrollIntoView({ behavior: "smooth" });
-  };
+  const profiles = [
+    { label: "X", href: site.socials.twitter },
+    { label: "GitHub", href: site.socials.github },
+    { label: "LinkedIn", href: site.socials.linkedin },
+  ].filter((profile) => Boolean(profile.href));
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-surface">
+    <section className="pt-12 md:pt-14" aria-labelledby="intro-heading">
+      <p className="text-ink-soft">{site.name}</p>
 
-      <div className="relative section-container section-padding pt-24 pb-14 md:pt-32 md:pb-24">
-        {/* Badge — dynamically loaded from availability.json */}
-        {availability.isAvailable && (
-          <motion.div
-            className="mb-6 flex justify-center"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-4 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm">
-              <span
-                className="h-1.5 w-1.5 rounded-full animate-pulse"
-                style={{ backgroundColor: COLOR_MAP[availability.color] }}
-              />
-              {availability.status}
-            </span>
-          </motion.div>
-        )}
+      <h1
+        id="intro-heading"
+        className="mt-8 text-[1.0625rem] font-semibold leading-[1.5] tracking-[-0.008em] text-ink md:text-[1.1875rem]"
+      >
+        {hero.headline}
+      </h1>
 
-        {/* Headline */}
-        <motion.h1
-          className="text-center text-display-xl max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
-        >
-          {(() => {
-            const highlightWord = hero.headline.includes("ambitious")
-              ? "ambitious"
-              : hero.headline.includes("premium")
-              ? "premium"
-              : null;
+      <div className="mt-6 space-y-6 text-ink-muted">
+        <p>{hero.subtitle}</p>
+        {hero.approach && <p>{hero.approach}</p>}
 
-            if (!highlightWord) return hero.headline;
-
-            const parts = hero.headline.split(highlightWord);
+        <p>
+          You can find me on{" "}
+          {profiles.map((profile, index) => {
+            const isLast = index === profiles.length - 1;
+            const separator =
+              index === 0
+                ? ""
+                : isLast
+                  ? profiles.length === 2
+                    ? " or "
+                    : ", or "
+                  : ", ";
             return (
-              <>
-                {parts[0]}
-                <span className="relative inline-block">
-                  <span className="relative z-10">{highlightWord}</span>
-                  <span
-                    className="absolute bottom-1 left-0 right-0 h-[2px] rounded-full"
-                    style={{
-                      background: "var(--accent-sage)",
-                      opacity: 0.3,
-                    }}
-                  />
-                </span>
-                {parts.slice(1).join(highlightWord)}
-              </>
+              <span key={profile.label}>
+                {separator}
+                <a
+                  href={profile.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link"
+                >
+                  {profile.label}
+                </a>
+              </span>
             );
-          })()}
-        </motion.h1>
-
-        {/* Subtitle */}
-        <motion.p
-          className="mt-5 text-center text-body md:text-body text-muted-foreground max-w-xl mx-auto leading-[var(--leading-body)]"
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 0.6, delay: 0.35 }}
-        >
-          {hero.subtitle}
-        </motion.p>
-
-        {/* CTAs — compact, minimal buttons */}
-        <motion.div
-          className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-2.5"
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 0.6, delay: 0.45 }}
-        >
-          <button
-            onClick={scrollToTarget(hero.ctaPrimaryTarget)}
-            className="inline-flex items-center gap-1.5 h-[34px] px-5 rounded-full bg-primary text-white text-[12px] font-medium tracking-wide hover:bg-[#1a1a1c] transition-all duration-300 active:scale-[0.98]"
-          >
-            {hero.ctaPrimary}
-            <ArrowRight
-              size={13}
-              className="transition-transform duration-300 hover:translate-x-0.5"
-            />
-          </button>
-          <button
-            onClick={scrollToTarget(hero.ctaSecondaryTarget)}
-            className="inline-flex items-center gap-1.5 h-[34px] px-5 rounded-full bg-transparent text-primary text-[12px] font-medium tracking-wide hover:bg-muted/60 transition-all duration-300 active:scale-[0.98]"
-          >
-            {hero.ctaSecondary}
-          </button>
-        </motion.div>
-
-        {/* Portfolio Showcase — clean video/image display */}
-        <motion.div
-          className="mt-12 md:mt-16"
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: [0.23, 1, 0.32, 1] }}
-        >
-          <PortfolioShowcase initialData={projects} />
-        </motion.div>
+          })}
+          {profiles.length > 0 ? ", or email me at " : "You can email me at "}
+          <a href={`mailto:${site.email}`} className="link">
+            {site.email}
+          </a>
+        </p>
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import { getSiteContent } from "@/lib/siteContent";
+import { SITE_URL } from "@/lib/site-url";
 import { readFileSync, existsSync } from "fs";
 import path from "path";
 
@@ -17,7 +18,7 @@ function readJsonData<T>(section: string, fallback: T): T {
  * Includes: Person, FAQ, and Project schemas.
  */
 export function JsonLd() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yoursite.com";
+  const siteUrl = SITE_URL;
   const content = getSiteContent();
   const faqs = readJsonData<any[]>("faq", []);
   const projects = readJsonData<any[]>("projects", []);
@@ -27,7 +28,7 @@ export function JsonLd() {
     "@context": "https://schema.org",
     "@type": "Person",
     name: content.site.name,
-    jobTitle: "Independent Web Designer & Developer",
+    jobTitle: "Product Designer & Frontend Engineer",
     url: siteUrl,
     email: content.site.email,
     sameAs: [
@@ -36,15 +37,16 @@ export function JsonLd() {
       content.site.socials.twitter,
     ].filter(Boolean),
     knowsAbout: [
-      "Web Design",
-      "Web Development",
+      "Product Design",
+      "Interaction Design",
+      "Frontend Engineering",
       "Next.js",
       "React",
       "TypeScript",
-      "Tailwind CSS",
-      "UI/UX Design",
+      "Design Systems",
       "Information Architecture",
-      "Performance Optimization",
+      "Applied Cryptography",
+      "Media Forensics",
     ],
     description: content.site.description,
   };
