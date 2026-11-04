@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/navbar";
-import { ProjectEntry } from "@/components/project-entry";
+import { WorkGallery } from "@/components/work-gallery";
 import { Footer } from "@/components/footer";
 import { getSiteContent } from "@/lib/siteContent";
 import { projects as projectRecords, workYearRange } from "@/data/projects";
@@ -21,6 +21,8 @@ export default function WorkIndexPage() {
     image: content.images.projects[project.id] || project.image,
   }));
 
+  const visuals = projects.filter((project) => hasVisuals(project)).map((p) => p.id);
+
   return (
     <>
       <div className="shell-wide pt-12">
@@ -33,22 +35,15 @@ export default function WorkIndexPage() {
 
         <main className="mx-auto w-full max-w-[1100px] pb-4">
           <header className="px-4 text-center">
-            <h1 className="display-serif text-[1.5rem] leading-[1.5]">Work</h1>
+            <h1 className="display-serif text-[1.5rem] leading-[1.5]">
+              Work Gallery
+            </h1>
             <p className="mt-3 text-meta text-ink-faint">
               {workYearRange(projectRecords)}
             </p>
           </header>
 
-          <div className="mt-10 grid gap-x-6 gap-y-10 px-4 sm:grid-cols-2">
-            {projects.map((project) => (
-              <ProjectEntry
-                key={project.id}
-                project={project}
-                compact
-                visuals={hasVisuals(project)}
-              />
-            ))}
-          </div>
+          <WorkGallery projects={projects} visuals={visuals} />
         </main>
       </div>
 

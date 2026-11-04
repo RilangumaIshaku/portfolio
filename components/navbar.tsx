@@ -28,7 +28,7 @@ export function SiteHeader({
         <Link
           href="/"
           aria-label="Back to the homepage"
-          className="inline-flex h-10 w-10 items-center justify-center justify-self-start rounded-full bg-panel text-ink-muted transition-opacity hover:opacity-70"
+          className="inline-flex h-10 w-10 items-center justify-center justify-self-start rounded-full bg-panel text-ink-muted transition-colors hover:bg-panel-soft hover:text-ink"
         >
           <ArrowLeft size={20} strokeWidth={1.5} />
         </Link>

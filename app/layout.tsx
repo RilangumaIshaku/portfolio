@@ -6,6 +6,7 @@ import { getSiteContent } from "@/lib/siteContent";
 import { JsonLd } from "@/components/json-ld";
 import { MediaCursor } from "@/components/media-cursor";
 import { SoundToggle } from "@/components/sound-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
 
 /*
@@ -85,11 +86,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
+        {/* Runs before paint so a remembered dark preference never flashes white. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('portfolio:theme')==='dark'){document.documentElement.dataset.theme='dark'}}catch(e){}",
+          }}
+        />
         <JsonLd />
         {children}
         <MediaCursor />
+        <ThemeToggle />
         <SoundToggle />
       </body>
     </html>

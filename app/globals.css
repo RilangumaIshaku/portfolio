@@ -33,6 +33,9 @@
   --focus: #111111;
   --cursor-pink: #e343de;
 
+  /* Frosted surfaces for the floating controls */
+  --glass: rgba(255, 255, 255, 0.86);
+
   /* ================================
      Typography
      ================================ */
@@ -59,6 +62,36 @@
   --gutter: 1rem;
   --measure-wide: 1280px;
   --gutter-wide: clamp(1rem, 5.5vw, 5rem);
+}
+
+/* ================================
+   Dark
+   Same tokens, inverted. The reference ships both modes from one palette;
+   everything here is variable-driven, so no component needs to know about it.
+   ================================ */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #f2f2f2;
+  --ink-soft: #d0d0d0;
+  --ink-muted: #9b9b9b;
+  --ink-faint: #6d6d6d;
+
+  --paper: #111111;
+  --panel: #1a1a1a;
+  --panel-soft: #252525;
+  --panel-warm: #1a1a1a;
+  --rule: rgba(255, 255, 255, 0.16);
+  --rule-soft: rgba(255, 255, 255, 0.09);
+
+  --pill: #f2f2f2;
+  --pill-hover: #ffffff;
+  --pill-foreground: #101010;
+
+  --focus: #f2f2f2;
+  --glass: rgba(17, 17, 17, 0.86);
+  --media-cursor-ink: #0a0a0a;
 }
 
 /* ================================
@@ -119,12 +152,12 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #e2e2dd;
+  background: var(--panel-soft);
   border-radius: 999px;
-  border: 3px solid #ffffff;
+  border: 3px solid var(--paper);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #cfcfc8;
+  background: var(--ink-faint);
 }
 
 /* ================================
@@ -284,6 +317,7 @@ body {
   border-radius: 999px;
   background: var(--cursor-pink);
   color: #0a0a0a;
+  mix-blend-mode: normal;
   opacity: 0;
   transform: scale(0.4);
   pointer-events: none;
@@ -447,14 +481,14 @@ body {
 .back-to-top {
   position: fixed;
   right: 1.5rem;
-  bottom: 4.75rem;
+  bottom: 8rem;
   z-index: 40;
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
   padding: 0.25rem 0.5rem;
   border-radius: 0.375rem;
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--glass);
   color: var(--ink);
   font-size: var(--text-body);
   line-height: 1.5333;
@@ -493,7 +527,7 @@ body {
   height: 2.25rem;
   border-radius: 999px;
   border: 1px solid var(--rule);
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--glass);
   color: var(--ink-muted);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -502,7 +536,32 @@ body {
 
 .sound-toggle:hover {
   color: var(--ink);
-  border-color: rgba(0, 0, 0, 0.24);
+  border-color: var(--ink-faint);
+}
+
+/* Theme switch sits directly above the sound control */
+.theme-toggle {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 4.75rem;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--glass);
+  color: var(--ink-muted);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  border-color: var(--ink-faint);
 }
 
 .sound-toggle[aria-pressed="true"] {
