@@ -7,7 +7,7 @@ interface HeaderSite {
 }
 
 /**
- * The site header: a portrait, a single black pill, nothing else.
+ * The header: a portrait, a single black pill, nothing else.
  * `variant="detail"` adds the back button and centres the portrait, matching
  * the reference's project pages.
  */
@@ -28,9 +28,9 @@ export function SiteHeader({
         <Link
           href="/"
           aria-label="Back to the homepage"
-          className="inline-flex h-11 w-11 items-center justify-center justify-self-start rounded-full bg-panel text-ink-muted transition-colors hover:bg-[#ecece8] hover:text-ink"
+          className="inline-flex h-10 w-10 items-center justify-center justify-self-start rounded-full bg-panel text-ink-muted transition-opacity hover:opacity-70"
         >
-          <ArrowLeft size={17} strokeWidth={1.6} />
+          <ArrowLeft size={20} strokeWidth={1.5} />
         </Link>
 
         <Link href="/" aria-label={`${site.name} — home`} className="justify-self-center">
@@ -38,21 +38,37 @@ export function SiteHeader({
         </Link>
 
         <Link href={ctaHref} className="pill justify-self-end">
-          Work with me
+          <WorkWithMeLabel />
         </Link>
       </header>
     );
   }
 
   return (
-    <header className="flex items-start justify-between">
+    <header className="flex items-center justify-between">
       <Link href="/" aria-label={`${site.name} — home`}>
         <Avatar src={profileImage} name={site.name} />
       </Link>
 
-      <a href={ctaHref} className="pill">
-        Work with me
-      </a>
+      <Link href={ctaHref} className="pill">
+        <WorkWithMeLabel />
+      </Link>
     </header>
+  );
+}
+
+/**
+ * Two stacked labels inside a 20px clipping window: on hover the first rolls
+ * up and "Book a call" rolls in beneath it — the same gesture the reference
+ * uses on its header pill.
+ */
+function WorkWithMeLabel() {
+  return (
+    <span className="pill__labels">
+      <span className="pill__label">Work with me</span>
+      <span className="pill__label pill__label--alt" aria-hidden="true">
+        Book a call
+      </span>
+    </span>
   );
 }

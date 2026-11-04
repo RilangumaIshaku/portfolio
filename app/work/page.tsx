@@ -4,6 +4,7 @@ import { ProjectEntry } from "@/components/project-entry";
 import { Footer } from "@/components/footer";
 import { getSiteContent } from "@/lib/siteContent";
 import { projects as projectRecords, workYearRange } from "@/data/projects";
+import { hasVisuals } from "@/lib/project-visuals";
 
 export const metadata: Metadata = {
   title: "Work — David Ishaku",
@@ -22,7 +23,7 @@ export default function WorkIndexPage() {
 
   return (
     <>
-      <div className="shell pt-10 md:pt-12">
+      <div className="shell-wide pt-12">
         <SiteHeader
           site={content.site}
           profileImage={content.images.profile}
@@ -30,17 +31,22 @@ export default function WorkIndexPage() {
           variant="detail"
         />
 
-        <main>
-          <header className="pt-12 text-center md:pt-14">
-            <h1 className="display-serif text-[2rem] md:text-[2.25rem]">Work</h1>
+        <main className="mx-auto w-full max-w-[1100px] pb-4">
+          <header className="px-4 text-center">
+            <h1 className="display-serif text-[1.5rem] leading-[1.5]">Work</h1>
             <p className="mt-3 text-meta text-ink-faint">
               {workYearRange(projectRecords)}
             </p>
           </header>
 
-          <div className="mt-12 grid gap-x-6 gap-y-12 sm:grid-cols-2 md:mt-14">
+          <div className="mt-10 grid gap-x-6 gap-y-10 px-4 sm:grid-cols-2">
             {projects.map((project) => (
-              <ProjectEntry key={project.id} project={project} compact />
+              <ProjectEntry
+                key={project.id}
+                project={project}
+                compact
+                visuals={hasVisuals(project)}
+              />
             ))}
           </div>
         </main>

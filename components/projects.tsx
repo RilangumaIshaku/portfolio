@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { ProjectEntry } from "@/components/project-entry";
 import type { Project } from "@/data/projects";
+import { hasVisuals } from "@/lib/project-visuals";
 
 /**
  * Work is presented twice, exactly as in the reference: one highlighted project
@@ -14,25 +15,34 @@ export function Work({ projects }: { projects: Project[] }) {
 
   return (
     <>
-      <section id="work" className="mt-20 scroll-mt-16 md:mt-24">
+      <section id="work" className="mt-11 scroll-mt-16">
         <SectionLabel>Highlights.</SectionLabel>
-        <div className="mt-7">
-          <ProjectEntry project={highlight} priority />
+        <div className="mt-6">
+          <ProjectEntry
+            project={highlight}
+            priority
+            highlight
+            visuals={hasVisuals(highlight)}
+          />
         </div>
       </section>
 
       {rest.length > 0 && (
-        <section id="projects" className="mt-16 scroll-mt-16 md:mt-20">
+        <section id="projects" className="mt-14 scroll-mt-16">
           <SectionLabel>Projects.</SectionLabel>
-          <div className="mt-7 space-y-14 md:space-y-20">
+          <div className="mt-6 space-y-10">
             {rest.map((project) => (
-              <ProjectEntry key={project.id} project={project} />
+              <ProjectEntry
+                key={project.id}
+                project={project}
+                visuals={hasVisuals(project)}
+              />
             ))}
           </div>
         </section>
       )}
 
-      <div className="mt-10">
+      <div className="mt-8">
         <Link
           href="/work"
           className="text-meta text-ink-faint transition-colors hover:text-ink"

@@ -18,6 +18,7 @@ const config: Config = {
         paper: "var(--paper)",
         panel: {
           DEFAULT: "var(--panel)",
+          soft: "var(--panel-soft)",
           warm: "var(--panel-warm)",
         },
         rule: "var(--rule)",
@@ -30,13 +31,14 @@ const config: Config = {
       },
       fontSize: {
         body: ["var(--text-body)", { lineHeight: "var(--leading-body)" }],
-        small: ["var(--text-small)", { lineHeight: "1.6" }],
-        meta: ["var(--text-meta)", { lineHeight: "1.5" }],
-        micro: ["var(--text-micro)", { lineHeight: "1.5" }],
-        title: ["var(--text-title)", { lineHeight: "1.4" }],
+        small: ["var(--text-small)", { lineHeight: "1.5333" }],
+        meta: ["var(--text-meta)", { lineHeight: "1.45" }],
+        micro: ["var(--text-micro)", { lineHeight: "1.4" }],
+        title: ["var(--text-title)", { lineHeight: "1.45" }],
       },
       maxWidth: {
         measure: "var(--measure)",
+        wide: "var(--measure-wide)",
       },
       spacing: {
         section: "4.5rem",

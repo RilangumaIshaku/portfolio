@@ -8,10 +8,12 @@ import { cn } from "@/lib/utils";
 export function Avatar({
   src,
   name,
+  size = 56,
   className,
 }: {
   src?: string;
   name: string;
+  size?: number;
   className?: string;
 }) {
   const initials = name
@@ -23,8 +25,9 @@ export function Avatar({
 
   return (
     <span
+      style={{ width: size, height: size }}
       className={cn(
-        "block h-11 w-11 shrink-0 overflow-hidden rounded-full bg-panel ring-1 ring-inset ring-black/[0.04]",
+        "block shrink-0 overflow-hidden rounded-full bg-panel",
         className
       )}
     >
@@ -33,14 +36,15 @@ export function Avatar({
         <img
           src={src}
           alt={name}
-          width={88}
-          height={88}
+          width={size * 2}
+          height={size * 2}
           className="h-full w-full object-cover"
         />
       ) : (
         <span
           aria-hidden="true"
-          className="flex h-full w-full items-center justify-center font-serif text-[16px] leading-none text-ink-muted"
+          className="flex h-full w-full items-center justify-center font-serif leading-none text-ink-faint"
+          style={{ fontSize: Math.round(size * 0.32) }}
         >
           {initials || "·"}
         </span>

@@ -2,26 +2,28 @@ import { cn } from "@/lib/utils";
 
 /**
  * Section label with the hairline that runs to the edge of the measure.
- * The reference uses a single rule for every section heading rather than
- * nested cards or dividers.
+ * The reference uses one rule for every section heading rather than nested
+ * cards or dividers.
  */
 export function SectionLabel({
   children,
   id,
+  as: Tag = "h2",
   className,
 }: {
   children: React.ReactNode;
   id?: string;
+  as?: "h2" | "h3" | "p";
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-center gap-5", className)}>
-      <h2
+    <div className={cn("flex w-full items-center gap-4", className)}>
+      <Tag
         id={id}
-        className="shrink-0 text-[1.0625rem] font-normal leading-none text-ink md:text-[1.1875rem]"
+        className="shrink-0 text-[0.9375rem] font-normal leading-[1.5333] text-ink"
       >
         {children}
-      </h2>
+      </Tag>
       <span className="rule" aria-hidden="true" />
     </div>
   );

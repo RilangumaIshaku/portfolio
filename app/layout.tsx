@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/inter/wght.css";
-import "@fontsource/instrument-serif/latin-400.css";
+import "@fontsource-variable/fraunces/full.css";
 import "./globals.css";
 import { getSiteContent } from "@/lib/siteContent";
 import { JsonLd } from "@/components/json-ld";
+import { MediaCursor } from "@/components/media-cursor";
+import { SoundToggle } from "@/components/sound-toggle";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
 
 /*
  * Typography carries this design, so both faces are self-hosted from the
  * fontsource packages imported above instead of relying on whatever the
- * visitor's OS substitutes. Inter sets the body copy; Instrument Serif
- * supplies the occasional high-contrast display line on project pages.
+ * visitor's OS substitutes. Inter sets the body copy; Fraunces supplies the
+ * display lines, tuned to the soft, low-wonk cut that reads closest to the
+ * reference's serif. (The reference's own faces, Untitled Sans and Gelica, are
+ * commercial licences and are not shipped here.)
  */
 
 export function generateMetadata(): Metadata {
@@ -85,6 +89,8 @@ export default function RootLayout({
       <body>
         <JsonLd />
         {children}
+        <MediaCursor />
+        <SoundToggle />
       </body>
     </html>
   );

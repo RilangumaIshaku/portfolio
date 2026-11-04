@@ -5,20 +5,24 @@
 /* ================================
    Design Tokens
    Quiet, editorial, light-only.
+   Values follow the reference: a 700px column, 15px/23px body copy,
+   a 17px serif intro line and 24px serif project titles.
    ================================ */
 
 :root {
   /* Text */
-  --ink: #171717;
-  --ink-soft: #3d3d3a;
-  --ink-muted: #6f6f69;
-  --ink-faint: #98988f;
+  --ink: #131313;
+  --ink-soft: #3a3a3a;
+  --ink-muted: #737373;
+  --ink-faint: #b2b2b2;
 
   /* Surfaces */
   --paper: #ffffff;
-  --panel: #f4f4f1;
-  --panel-warm: #f2ede4;
-  --rule: #e7e7e2;
+  --panel: #f5f5f5;
+  --panel-soft: #e9e9e9;
+  --panel-warm: #f5f5f5;
+  --rule: rgba(0, 0, 0, 0.12);
+  --rule-soft: rgba(0, 0, 0, 0.07);
 
   /* Actions */
   --pill: #111111;
@@ -27,6 +31,7 @@
 
   /* Accent — used sparingly, never decorative */
   --focus: #111111;
+  --cursor-pink: #e343de;
 
   /* ================================
      Typography
@@ -35,27 +40,25 @@
   --font-body: "Inter Variable", "Inter", "SF Pro Text", -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui,
     sans-serif;
-  --font-display: "Instrument Serif", ui-serif, "Iowan Old Style",
+  --font-display: "Fraunces Variable", "Fraunces", ui-serif, "Iowan Old Style",
     "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --display-variation: "SOFT" 30, "WONK" 0, "opsz" 22, "GRAD" 0;
   --font-code: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 
-  /* Body copy: 17px on phones, 19px from tablets up — the reference's rhythm */
-  --text-body: clamp(1.0625rem, 0.875rem + 0.42vw, 1.1875rem);
+  --text-body: 0.9375rem; /* 15px */
   --text-small: 0.9375rem; /* 15px */
-  --text-meta: 0.8125rem; /* 13px */
+  --text-meta: 0.875rem; /* 14px */
   --text-micro: 0.75rem; /* 12px */
-  --text-title: clamp(1.125rem, 1rem + 0.3vw, 1.1875rem);
+  --text-title: 0.9375rem; /* 15px */
 
-  --leading-body: 1.62;
-  --leading-tight: 1.28;
-
-  --tracking-tight: -0.011em;
-  --tracking-meta: 0.07em;
+  --leading-body: 1.5333; /* 23px at 15px */
 
   /* Layout — the reference's single restrained column */
-  --measure: 856px;
-  --gutter: 1.5rem;
+  --measure: 700px;
+  --gutter: 1rem;
+  --measure-wide: 1280px;
+  --gutter-wide: clamp(1rem, 5.5vw, 5rem);
 }
 
 /* ================================
@@ -80,7 +83,7 @@ body {
   font-size: var(--text-body);
   font-weight: 400;
   line-height: var(--leading-body);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: normal;
   font-feature-settings: "cv05" 1, "cv11" 1, "ss01" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -131,9 +134,18 @@ body {
 @layer components {
   .shell {
     width: 100%;
-    max-width: calc(var(--measure) + var(--gutter) * 2);
+    max-width: var(--measure);
     margin-inline: auto;
     padding-inline: var(--gutter);
+  }
+
+  /* Case-study chrome (back / portrait / pill) runs wider than the column,
+     just as it does on the reference. */
+  .shell-wide {
+    width: 100%;
+    max-width: calc(var(--measure-wide) + var(--gutter-wide) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter-wide);
   }
 
   /* A single hairline used to carry section labels */
@@ -147,14 +159,14 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 2.5rem;
-    padding-inline: 1.125rem;
+    height: 2.25rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 999px;
     background: var(--pill);
     color: var(--pill-foreground);
     font-size: var(--text-meta);
-    font-weight: 500;
-    letter-spacing: 0;
+    font-weight: 400;
+    letter-spacing: -0.005em;
     line-height: 1;
     white-space: nowrap;
     transition: background-color 160ms ease, transform 160ms ease;
@@ -166,33 +178,80 @@ body {
     transform: scale(0.985);
   }
 
-  /* Inline text link: underlined, darkens on hover */
+  /* Quiet pill: the grey "See gallery" control on the featured project */
+  .pill--quiet {
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .pill--quiet:hover {
+    background: var(--panel-soft);
+  }
+
+  /* Inline text link: dotted rule under a dark label, as on the reference */
   .link {
     color: var(--ink);
     text-decoration: underline;
+    text-decoration-style: dotted;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
-    text-decoration-color: #c9c9c2;
-    transition: text-decoration-color 160ms ease, color 160ms ease;
+    text-decoration-color: var(--ink);
+    transition: opacity 160ms ease;
   }
   .link:hover {
-    text-decoration-color: var(--ink);
+    opacity: 0.65;
   }
 
   .meta {
-    font-family: var(--font-code);
-    font-size: var(--text-micro);
-    letter-spacing: var(--tracking-meta);
-    text-transform: uppercase;
+    font-size: var(--text-meta);
+    letter-spacing: normal;
     color: var(--ink-faint);
   }
 
   .display-serif {
     font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.015em;
-    line-height: 1.05;
+    font-variation-settings: var(--display-variation);
+    letter-spacing: -0.01em;
+    line-height: 1.5;
     color: var(--ink);
+  }
+}
+
+/* ================================
+   Entrance
+   The reference eases its blocks in from a soft blur. CSS only, so nothing
+   is left invisible if JavaScript never runs, and it is skipped entirely for
+   readers who ask for reduced motion.
+   ================================ */
+
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+.enter {
+  animation: enter-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.enter-delay-1 {
+  animation-delay: 80ms;
+}
+
+.enter-delay-2 {
+  animation-delay: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation: none;
   }
 }
 
@@ -200,14 +259,53 @@ body {
    Media
    ================================ */
 
-.frame {
+.stage {
   position: relative;
   overflow: hidden;
   background: var(--panel);
-  border: 1px solid var(--rule);
 }
 
-.frame img {
+/* The eye cursor replaces the system pointer over imagery. */
+[data-media-cursor] {
+  cursor: none;
+}
+
+.media-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  margin-top: -16px;
+  border-radius: 999px;
+  background: var(--cursor-pink);
+  color: #0a0a0a;
+  opacity: 0;
+  transform: scale(0.4);
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 160ms ease, scale 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.media-cursor[data-visible="true"] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .media-cursor {
+    display: none;
+  }
+  [data-media-cursor] {
+    cursor: pointer;
+  }
+}
+
+.stage img {
   display: block;
   width: 100%;
   height: 100%;
@@ -216,8 +314,199 @@ body {
   transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.frame-hover:hover .frame img {
+.stage-hover:hover img {
   transform: scale(1.012);
+}
+
+/* Images keep their own aspect ratio — nothing is cropped or letterboxed. */
+.stage-natural img {
+  height: auto;
+  object-fit: cover;
+}
+
+/* ================================
+   Header pill — label rolls up on hover
+   "Work with me" slides out, "Book a call" slides in, in a 20px clip.
+   ================================ */
+
+.pill__labels {
+  position: relative;
+  display: block;
+  height: 1.25rem;
+  overflow: hidden;
+}
+
+.pill__label {
+  display: block;
+  line-height: 1.25rem;
+  will-change: transform;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease;
+}
+
+.pill__label--alt {
+  position: absolute;
+  inset: 0 auto auto 0;
+  transform: translateY(105%);
+  opacity: 0;
+}
+
+.pill:hover .pill__label,
+.pill:focus-visible .pill__label {
+  transform: translateY(-105%);
+  opacity: 0;
+}
+
+.pill:hover .pill__label--alt,
+.pill:focus-visible .pill__label--alt {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ================================
+   Copy-email control
+   ================================ */
+
+.copy-email {
+  position: relative;
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.copy-email__tip {
+  position: absolute;
+  bottom: calc(100% + 0.375rem);
+  left: 0;
+  z-index: 30;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: var(--text-micro);
+  line-height: 1.34;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(2px);
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.copy-email:hover .copy-email__tip,
+.copy-email:focus-within .copy-email__tip,
+.copy-email[data-copied="true"] .copy-email__tip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ================================
+   Case-study contents
+   ================================ */
+
+.case-toc {
+  position: absolute;
+  top: 0;
+  left: -17rem;
+  display: none;
+  width: 12.5rem;
+  height: 100%;
+  pointer-events: none;
+}
+
+.case-toc__inner {
+  position: sticky;
+  top: 6rem;
+  pointer-events: auto;
+}
+
+@media (min-width: 1320px) {
+  .case-toc {
+    display: block;
+  }
+}
+
+.case-toc a {
+  display: block;
+  padding: 0.625rem 0;
+  font-size: var(--text-meta);
+  line-height: 1.25rem;
+  color: #737373;
+  transition: color 180ms ease;
+}
+
+.case-toc a:hover {
+  color: var(--ink-soft);
+}
+
+.case-toc a[data-active="true"] {
+  color: var(--ink);
+}
+
+/* ================================
+   Back to top
+   ================================ */
+
+.back-to-top {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 4.75rem;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink);
+  font-size: var(--text-body);
+  line-height: 1.5333;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.back-to-top[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  opacity: 1;
+  color: var(--ink-muted);
+}
+
+/* ================================
+   Sound toggle
+   ================================ */
+
+.sound-toggle {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink-muted);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.sound-toggle:hover {
+  color: var(--ink);
+  border-color: rgba(0, 0, 0, 0.24);
+}
+
+.sound-toggle[aria-pressed="true"] {
+  color: var(--ink);
 }
 
 /* Accordion body — grid trick keeps the animation cheap and avoids JS height math */

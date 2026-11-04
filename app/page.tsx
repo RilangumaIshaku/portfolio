@@ -28,13 +28,19 @@ export default async function Home() {
 
   return (
     <>
-      <div className="shell pt-10 md:pt-12">
-        <SiteHeader site={content.site} profileImage={content.images.profile} />
+      <div className="shell pt-12">
+        <div className="enter">
+          <SiteHeader site={content.site} profileImage={content.images.profile} />
+        </div>
 
         <main>
-          <Introduction content={content} />
+          <div className="enter enter-delay-1">
+            <Introduction content={content} />
+          </div>
 
-          <Work projects={projects} />
+          <div className="enter enter-delay-2">
+            <Work projects={projects} />
+          </div>
 
           <Capabilities
             items={capabilities.filter((item) => item?.title && item?.description)}
@@ -44,7 +50,10 @@ export default async function Home() {
 
           <FAQ items={faqData.filter((item) => item?.question && item?.answer)} />
 
-          <Contact email={content.site.email} />
+          <Contact
+            email={content.site.email}
+            telegram={content.site.telegram}
+          />
         </main>
       </div>
 

@@ -13,16 +13,18 @@ export function Capabilities({ items }: { items: Capability[] }) {
   if (items.length === 0) return null;
 
   return (
-    <section id="capabilities" className="mt-20 scroll-mt-16 md:mt-24">
+    <section id="capabilities" className="mt-14 scroll-mt-16">
       <SectionLabel>Capabilities.</SectionLabel>
 
-      <dl className="mt-7">
+      <dl className="mt-6">
         {items.map((item) => (
           <div
             key={item.title}
-            className="grid gap-2 border-b border-rule py-6 md:grid-cols-[minmax(0,14rem)_1fr] md:gap-10 md:py-7"
+            className="grid gap-1.5 border-b border-rule py-4 md:grid-cols-[minmax(0,13rem)_1fr] md:gap-10"
           >
-            <dt className="text-title leading-snug text-ink">{item.title}</dt>
+            <dt className="text-[0.9375rem] leading-[1.45] text-ink">
+              {item.title}
+            </dt>
             <dd className="text-ink-muted">{item.description}</dd>
           </div>
         ))}

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { SiteHeader } from "@/components/navbar";
 import { StatusChip } from "@/components/project-entry";
+import { CaseStudyToc } from "@/components/case-study-toc";
+import { CaseViewToggle } from "@/components/case-view-toggle";
+import { BackToTop } from "@/components/back-to-top";
 import { Footer } from "@/components/footer";
 import { getSiteContent } from "@/lib/siteContent";
 import {
@@ -12,6 +15,7 @@ import {
   projects,
   type Project,
 } from "@/data/projects";
+import { getProjectVisuals } from "@/lib/project-visuals";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.id }));
@@ -52,15 +56,34 @@ export default async function CaseStudyPage({
   const content = getSiteContent();
   const image = content.images.projects[project.id] || project.image;
   const { previous, next } = getAdjacentProjects(project.id);
+
   // The hero image is often also the first gallery entry; showing it twice reads
   // as a mistake, so the duplicate is dropped here.
   const gallery = (project.gallery ?? []).filter(
     (item) => Boolean(item.src) && item.src !== image
   );
 
+  const visuals = getProjectVisuals(project, content.images.projects);
+
+  const sections = [
+    { id: "summary", label: "Summary", body: project.summary },
+    { id: "challenge", label: "Challenge", body: project.challenge },
+    { id: "approach", label: "Approach", body: project.approach },
+    { id: "outcome", label: "Outcome", body: project.result },
+  ].filter((section) => Boolean(section.body));
+
+  const toc = [
+    { id: "introduction", label: "Introduction" },
+    ...sections.map(({ id, label }) => ({ id, label })),
+    ...(gallery.length > 0 ? [{ id: "visuals", label: "Visuals" }] : []),
+    ...(project.technologies?.length
+      ? [{ id: "built-with", label: "Built with" }]
+      : []),
+  ];
+
   return (
     <>
-      <div className="shell pt-10 md:pt-12">
+      <div className="shell-wide pt-12">
         <SiteHeader
           site={content.site}
           profileImage={content.images.profile}
@@ -68,10 +91,10 @@ export default async function CaseStudyPage({
           variant="detail"
         />
 
-        <main className="pb-4">
-          <header className="pt-10 text-center md:pt-12">
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <h1 className="display-serif text-[2rem] md:text-[2.375rem]">
+        <main className="relative mx-auto mt-4 w-full max-w-[700px] pb-4 md:px-0">
+          <header id="introduction" className="scroll-mt-24 px-4 text-center md:px-0">
+            <div className="flex flex-wrap items-center justify-center gap-[0.625rem]">
+              <h1 className="display-serif text-[1.5rem] leading-[1.5]">
                 {project.title}
               </h1>
               {project.url && (
@@ -79,117 +102,117 @@ export default async function CaseStudyPage({
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-panel px-3 py-1.5 text-meta text-ink-muted transition-colors hover:bg-[#ecece8] hover:text-ink"
+                  className="inline-flex items-center gap-1 rounded-full bg-panel px-1.5 py-1 text-[0.75rem] leading-none text-ink transition-colors hover:bg-panel-soft"
                 >
                   Visit
-                  <ArrowUpRight size={12} strokeWidth={1.75} />
+                  <ArrowUpRight size={11} strokeWidth={1.8} />
                 </a>
               )}
             </div>
 
-            <p className="mt-3 text-meta text-ink-faint">
-              {project.year} · {project.category}
-            </p>
+            <p className="mt-4 text-meta text-ink-faint">{project.year}</p>
 
-            <p className="mx-auto mt-8 max-w-[38rem] text-ink-muted">
-              {project.description}
-            </p>
+            <p className="mx-auto mt-6 text-ink">{project.description}</p>
 
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-meta text-ink-faint">
-              {project.status && <StatusChip status={project.status} />}
-              {project.role && <span>{project.role}</span>}
-            </div>
+            {visuals.length > 0 && (
+              <CaseViewToggle slug={project.id} active="case" />
+            )}
           </header>
 
-          {image && (
-            <figure className="mt-12">
-              <div className="frame aspect-[16/10]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image}
-                  alt={`${project.title} — ${project.category}`}
-                  className="h-full w-full object-cover object-top"
-                />
-              </div>
-            </figure>
-          )}
+          <div className="relative">
+            <CaseStudyToc items={toc} />
 
-          {project.summary && (
-            <section
-              aria-labelledby="summary-heading"
-              className="mt-12 bg-panel-warm"
-            >
-              <div className="border-b border-black/[0.05] px-6 py-3">
-                <h2
-                  id="summary-heading"
-                  className="meta flex items-center gap-2 text-[#9a8a70]"
+            {image && (
+              <figure className="mt-6 px-4 md:px-0">
+                <div className="stage stage-natural" data-media-cursor="eye">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image}
+                    alt={`${project.title} — ${project.category}`}
+                    className="h-full w-full object-cover object-top"
+                  />
+                </div>
+              </figure>
+            )}
+
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 px-4 text-meta text-ink-faint md:px-0">
+              {project.status && <StatusChip status={project.status} />}
+              {project.role && <span>{project.role}</span>}
+              {project.category && <span>{project.category}</span>}
+            </div>
+
+            <div className="mt-12 space-y-12 px-4 md:px-0">
+              {sections.map((section) => (
+                <section
+                  key={section.id}
+                  id={section.id}
+                  className="scroll-mt-24"
                 >
-                  <span aria-hidden="true">◎</span> Summary
-                </h2>
-              </div>
-              <div className="px-6 py-6">
-                <p className="text-ink-soft">{project.summary}</p>
-              </div>
-            </section>
-          )}
+                  <SectionRow>{section.label}</SectionRow>
+                  <p className="mt-3 text-ink-soft">{section.body}</p>
+                </section>
+              ))}
+            </div>
 
-          {(project.challenge || project.approach || project.result) && (
-            <dl className="mt-14">
-              {[
-                { label: "Challenge", value: project.challenge },
-                { label: "Approach", value: project.approach },
-                { label: "Outcome", value: project.result },
-              ]
-                .filter((row) => Boolean(row.value))
-                .map((row) => (
-                  <div
-                    key={row.label}
-                    className="grid gap-2 border-b border-rule py-6 md:grid-cols-[minmax(0,11rem)_1fr] md:gap-10"
-                  >
-                    <dt className="meta pt-1">{row.label}</dt>
-                    <dd className="text-ink-muted">{row.value}</dd>
-                  </div>
-                ))}
-            </dl>
-          )}
-
-          {gallery.length > 0 && (
-            <section id="visuals" className="mt-14 scroll-mt-16">
-              <div className="grid gap-6 sm:grid-cols-2">
-                {gallery.map((item) => (
+            {gallery.length > 0 && (
+              <section id="visuals" className="mt-12 scroll-mt-24 px-4 md:px-0">
+                <SectionRow>Visuals</SectionRow>
+                <div className="mt-6 space-y-6">
+                  {gallery.map((item) => (
                   <figure key={item.src + (item.caption ?? "")}>
-                    <div className="frame aspect-[16/10]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.src}
-                        alt={item.caption ?? `${project.title} interface`}
-                        loading="lazy"
-                        className="h-full w-full object-cover object-top"
-                      />
-                    </div>
-                    {item.caption && (
-                      <figcaption className="mt-2.5 text-center text-meta text-ink-faint">
-                        {item.caption}
-                      </figcaption>
-                    )}
-                  </figure>
-                ))}
-              </div>
-            </section>
-          )}
+                    <div className="stage stage-natural" data-media-cursor="eye">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.src}
+                          alt={item.caption ?? `${project.title} interface`}
+                          loading="lazy"
+                          className="h-full w-full object-cover object-top"
+                        />
+                      </div>
+                      {item.caption && (
+                        <figcaption className="mt-2.5 text-center text-meta text-ink-faint">
+                          {item.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              </section>
+            )}
 
-          {project.technologies && project.technologies.length > 0 && (
-            <p className="mt-12 text-meta text-ink-faint">
-              {project.technologies.join(" · ")}
-            </p>
-          )}
+            {project.technologies && project.technologies.length > 0 && (
+              <section
+                id="built-with"
+                className="mt-12 scroll-mt-24 px-4 md:px-0"
+              >
+                <SectionRow>Built with</SectionRow>
+                <p className="mt-3 text-ink-soft">
+                  {project.technologies.join(" · ")}
+                </p>
+              </section>
+            )}
 
-          <ProjectPager previous={previous} next={next} />
+            <div className="px-4 md:px-0">
+              <ProjectPager previous={previous} next={next} />
+            </div>
+          </div>
         </main>
       </div>
 
+      <BackToTop />
       <Footer site={content.site} />
     </>
+  );
+}
+
+function SectionRow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex w-full items-center gap-3">
+      <h2 className="shrink-0 text-[0.9375rem] font-medium leading-[1.5333] text-ink">
+        {children}
+      </h2>
+      <span className="rule" aria-hidden="true" />
+    </div>
   );
 }
 
@@ -205,27 +228,37 @@ function ProjectPager({
   return (
     <nav
       aria-label="More work"
-      className="mt-16 grid border-t border-rule sm:grid-cols-2"
+      className="mx-auto mt-14 grid max-w-[560px] border border-rule sm:grid-cols-2"
     >
       {previous && (
         <Link
           href={`/work/${previous.id}`}
-          className="group border-b border-rule py-7 sm:border-b-0 sm:border-r sm:pr-8"
+          className="group flex flex-col justify-between gap-8 border-b border-rule p-3 transition-colors hover:bg-panel/60 sm:border-b-0 sm:border-r"
         >
-          <span className="meta block">Previous</span>
-          <span className="mt-2 block text-title text-ink-muted transition-colors group-hover:text-ink">
-            {previous.title}
+          <ArrowLeft size={16} strokeWidth={1.6} className="text-ink" />
+          <span>
+            <span className="block text-meta text-ink-faint">Previous</span>
+            <span className="mt-1 block text-ink-muted transition-colors group-hover:text-ink">
+              {previous.title}
+            </span>
           </span>
         </Link>
       )}
       {next && (
         <Link
           href={`/work/${next.id}`}
-          className="group py-7 sm:pl-8 sm:text-right"
+          className="group flex flex-col justify-between gap-8 p-3 transition-colors hover:bg-panel/60"
         >
-          <span className="meta block">Next</span>
-          <span className="mt-2 block text-title text-ink-muted transition-colors group-hover:text-ink">
-            {next.title}
+          <ArrowRight
+            size={16}
+            strokeWidth={1.6}
+            className="self-end text-ink"
+          />
+          <span className="text-right">
+            <span className="block text-meta text-ink-faint">Next</span>
+            <span className="mt-1 block text-ink-muted transition-colors group-hover:text-ink">
+              {next.title}
+            </span>
           </span>
         </Link>
       )}

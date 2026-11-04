@@ -15,14 +15,20 @@ interface FormData {
 const EMPTY: FormData = { name: "", email: "", company: "", message: "" };
 
 const inputClasses =
-  "w-full border-0 border-b border-rule bg-transparent pb-2.5 pt-2 text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors";
+  "w-full border-0 border-b border-rule bg-transparent pb-2 pt-1.5 text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors";
 
 /**
- * Contact: a short invitation, the email address, and a form with three
+ * Contact: a short invitation, the two ways to reach me, and a form with three
  * fields. Submissions still go through the existing /api/contact route, so
  * rate limiting, storage and email delivery are unchanged.
  */
-export function Contact({ email }: { email: string }) {
+export function Contact({
+  email,
+  telegram,
+}: {
+  email: string;
+  telegram?: string;
+}) {
   const [formData, setFormData] = useState<FormData>(EMPTY);
   const [status, setStatus] = useState<Status>("idle");
 
@@ -57,30 +63,45 @@ export function Contact({ email }: { email: string }) {
   };
 
   return (
-    <section id="contact" className="mt-20 scroll-mt-16 md:mt-24">
+    <section id="contact" className="mt-14 scroll-mt-16">
       <SectionLabel>Contact.</SectionLabel>
 
-      <div className="mt-7 max-w-[62ch]">
+      <div className="mt-6">
         <p className="text-ink-muted">
           If you are working on something that needs this kind of care, I would
           like to hear about it. A short note about the problem is enough to
           start.
         </p>
-        <p className="mt-4">
+        <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
           <a href={`mailto:${email}`} className="link">
             {email}
           </a>
+          {telegram && (
+            <>
+              <span aria-hidden="true" className="text-ink-faint">
+                ·
+              </span>
+              <a
+                href={telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link"
+              >
+                Telegram
+              </a>
+            </>
+          )}
         </p>
       </div>
 
       {status === "success" ? (
-        <p className="mt-10 max-w-[62ch] text-ink" role="status">
+        <p className="mt-9 text-ink" role="status">
           Thank you — your note has arrived. I&rsquo;ll reply within a couple of
           days.
         </p>
       ) : (
-        <form onSubmit={handleSubmit} className="mt-10 max-w-[62ch]">
-          <div className="grid gap-7 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} className="mt-9">
+          <div className="grid gap-6 sm:grid-cols-2">
             <label className="block">
               <span className="meta block text-ink-faint">Name</span>
               <input
@@ -110,9 +131,10 @@ export function Contact({ email }: { email: string }) {
             </label>
           </div>
 
-          <label className="mt-7 block">
+          <label className="mt-6 block">
             <span className="meta block text-ink-faint">
-              Company <span className="normal-case tracking-normal">(optional)</span>
+              Company{" "}
+              <span className="text-ink-faint/70">(optional)</span>
             </span>
             <input
               type="text"
@@ -125,7 +147,7 @@ export function Contact({ email }: { email: string }) {
             />
           </label>
 
-          <label className="mt-7 block">
+          <label className="mt-6 block">
             <span className="meta block text-ink-faint">Message</span>
             <textarea
               name="message"
@@ -138,7 +160,7 @@ export function Contact({ email }: { email: string }) {
             />
           </label>
 
-          <div className="mt-8 flex items-center gap-4">
+          <div className="mt-7 flex items-center gap-4">
             <button
               type="submit"
               disabled={status === "loading"}

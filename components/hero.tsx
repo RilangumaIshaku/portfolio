@@ -1,8 +1,12 @@
 import type { SiteContent } from "@/lib/siteContent";
+import { CopyEmail } from "@/components/copy-email";
 
 /**
  * The introduction: name, one positioning line, two short paragraphs, and the
  * places to find me. Deliberately small — no display type, no illustration.
+ *
+ * Type and rhythm follow the reference exactly: 15px/23px body, a 17px/25px
+ * statement line at normal weight, 24px between blocks.
  */
 export function Introduction({ content }: { content: SiteContent }) {
   const { site, hero } = content;
@@ -14,12 +18,12 @@ export function Introduction({ content }: { content: SiteContent }) {
   ].filter((profile) => Boolean(profile.href));
 
   return (
-    <section className="pt-12 md:pt-14" aria-labelledby="intro-heading">
-      <p className="text-ink-soft">{site.name}</p>
+    <section className="pt-6" aria-labelledby="intro-heading">
+      <p className="text-ink-muted">{site.name}</p>
 
       <h1
         id="intro-heading"
-        className="mt-8 text-[1.0625rem] font-semibold leading-[1.5] tracking-[-0.008em] text-ink md:text-[1.1875rem]"
+        className="mt-6 text-[1.0625rem] font-normal leading-[1.4706] tracking-[-0.01em] text-ink"
       >
         {hero.headline}
       </h1>
@@ -29,7 +33,7 @@ export function Introduction({ content }: { content: SiteContent }) {
         {hero.approach && <p>{hero.approach}</p>}
 
         <p>
-          You can find me on{" "}
+          {profiles.length > 0 ? "You can find me on" : "You can email me at"}{" "}
           {profiles.map((profile, index) => {
             const isLast = index === profiles.length - 1;
             const separator =
@@ -43,21 +47,38 @@ export function Introduction({ content }: { content: SiteContent }) {
             return (
               <span key={profile.label}>
                 {separator}
+                <span className="whitespace-nowrap">
+                  <a
+                    href={profile.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link"
+                  >
+                    {profile.label}
+                  </a>
+                  {isLast ? "," : ""}
+                </span>
+              </span>
+            );
+          })}
+          {profiles.length > 0 && " or email me at "}
+          <span className="whitespace-nowrap">
+            <CopyEmail email={site.email} />
+            {site.telegram && (
+              <>
+                {", or on "}
                 <a
-                  href={profile.href}
+                  href={site.telegram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="link"
                 >
-                  {profile.label}
+                  Telegram
                 </a>
-              </span>
-            );
-          })}
-          {profiles.length > 0 ? ", or email me at " : "You can email me at "}
-          <a href={`mailto:${site.email}`} className="link">
-            {site.email}
-          </a>
+              </>
+            )}
+            .
+          </span>
         </p>
       </div>
     </section>

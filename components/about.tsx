@@ -2,10 +2,10 @@ import { SectionLabel } from "@/components/section-label";
 
 export function About() {
   return (
-    <section id="about" className="mt-20 scroll-mt-16 md:mt-24">
+    <section id="about" className="mt-14 scroll-mt-16">
       <SectionLabel>About.</SectionLabel>
 
-      <div className="mt-7 max-w-[64ch] space-y-6 text-ink-muted">
+      <div className="mt-6 space-y-6 text-ink-muted">
         <p>
           I&rsquo;m David, a product designer and frontend engineer based in
           Nigeria, working remotely with teams and founders. I move between
