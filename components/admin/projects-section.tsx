@@ -32,6 +32,7 @@ export function ProjectsSection({
   const [list, setList] = useState(data);
   const [expanded, setExpanded] = useState<number | null>(null);
   const [imgLoading, setImgLoading] = useState<number | null>(null);
+  const [galleryLoading, setGalleryLoading] = useState<string | null>(null);
   useEffect(() => {
     setList(data);
   }, [data]);
@@ -76,6 +77,38 @@ export function ProjectsSection({
     const url = await uploadFile(file, `project-${list[i].id}`, token);
     if (url) update(i, { ...list[i], image: url });
     setImgLoading(null);
+  };
+
+  const setGallery = (projectIndex: number, gallery: any[]) =>
+    update(projectIndex, { ...list[projectIndex], gallery });
+
+  const addGalleryImage = (i: number) =>
+    setGallery(i, [...(list[i].gallery ?? []), { src: "", caption: "" }]);
+
+  const removeGalleryImage = (i: number, index: number) =>
+    setGallery(
+      i,
+      (list[i].gallery ?? []).filter(
+        (_: any, position: number) => position !== index
+      )
+    );
+
+  const updateGalleryImage = (i: number, index: number, patch: any) =>
+    setGallery(
+      i,
+      (list[i].gallery ?? []).map((shot: any, position: number) =>
+        position === index ? { ...shot, ...patch } : shot
+      )
+    );
+
+  const uploadGalleryImage = async (i: number, index: number, file: File) => {
+    // "gallery-…" is not a project key, so the upload route stores the file
+    // without overwriting the project's hero image.
+    const key = `gallery-${list[i].id}-${index}`;
+    setGalleryLoading(key);
+    const url = await uploadFile(file, key, token);
+    if (url) updateGalleryImage(i, index, { src: url });
+    setGalleryLoading(null);
   };
 
   return (
@@ -132,6 +165,47 @@ export function ProjectsSection({
                 onUpload={(f) => uploadImg(i, f)}
                 loading={imgLoading === i}
               />
+              <Field
+                label="Gallery"
+                hint="Extra case-study images. Upload, then Save to apply."
+              >
+                <div className="space-y-2">
+                  {(item.gallery ?? []).map((shot: any, gi: number) => (
+                    <div
+                      key={gi}
+                      className="rounded-xl border border-white/[0.05] p-2 space-y-2"
+                    >
+                      <ImageUploadInline
+                        label={`Image ${gi + 1}`}
+                        currentImage={shot.src || ""}
+                        onUpload={(f) => uploadGalleryImage(i, gi, f)}
+                        loading={
+                          galleryLoading === `gallery-${item.id}-${gi}`
+                        }
+                      />
+                      <Input
+                        value={shot.caption || ""}
+                        onChange={(v) =>
+                          updateGalleryImage(i, gi, { caption: v })
+                        }
+                        placeholder="Caption (optional)"
+                      />
+                      <button
+                        onClick={() => removeGalleryImage(i, gi)}
+                        className="text-[11px] text-white/25 hover:text-red-400/70 transition-colors"
+                      >
+                        Remove image
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => addGalleryImage(i)}
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white/[0.04] border border-white/[0.06] text-[11px] text-white/40 hover:text-white/70 transition-all"
+                  >
+                    <Plus size={11} /> Add gallery image
+                  </button>
+                </div>
+              </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Title">
                   <Input

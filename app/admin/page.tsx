@@ -15,11 +15,13 @@ import {
   Briefcase,
   HelpCircle,
   FolderOpen,
+  FileText,
   Menu,
 } from "lucide-react";
 
 // ── Types ───────────────────────────────────────────────────
 import type { SiteContent } from "@/components/admin/types";
+import { DEFAULT_COPY } from "@/lib/content-defaults";
 
 // ── Section components ──────────────────────────────────────
 import { HeroSection } from "@/components/admin/hero-section";
@@ -29,12 +31,14 @@ import { FaqSection } from "@/components/admin/faq-section";
 import { SiteSection } from "@/components/admin/site-section";
 import { ImagesSection } from "@/components/admin/images-section";
 import { LinksSection } from "@/components/admin/links-section";
+import { CopySection } from "@/components/admin/copy-section";
 import { JobsSection } from "@/components/admin/jobs-section";
 
 type Section =
   | "hero"
   | "services"
   | "projects"
+  | "copy"
   | "faq"
   | "site"
   | "images"
@@ -52,6 +56,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "hero", label: "Hero", icon: Type, group: "Content" },
   { id: "services", label: "Services", icon: Briefcase, group: "Content" },
   { id: "projects", label: "Projects", icon: FolderOpen, group: "Content" },
+  { id: "copy", label: "Copy", icon: FileText, group: "Content" },
   { id: "faq", label: "FAQ", icon: HelpCircle, group: "Content" },
   { id: "site", label: "Site Info", icon: Globe, group: "Settings" },
   { id: "images", label: "Images", icon: ImageIcon, group: "Settings" },
@@ -94,6 +99,7 @@ const defaultContent: SiteContent = {
   links: {
     ctaTarget: "#contact",
   },
+  copy: DEFAULT_COPY,
 };
 
 // ── Component ───────────────────────────────────────────────
@@ -536,6 +542,13 @@ export default function AdminPage() {
                 <FaqSection
                   data={faqs}
                   onSave={(d) => saveSectionData("faq", d)}
+                  loading={loading}
+                />
+              )}
+              {activeSection === "copy" && (
+                <CopySection
+                  copy={content.copy}
+                  onSave={saveSection}
                   loading={loading}
                 />
               )}

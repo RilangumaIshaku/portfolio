@@ -42,7 +42,7 @@ export default async function WorkIndexPage() {
         <main className="mx-auto w-full max-w-[1100px] pb-4">
           <header className="px-4 text-center">
             <h1 className="display-serif text-[1.5rem] leading-[1.5]">
-              Work Gallery
+              {content.copy.labels.work}
             </h1>
             <p className="mt-3 text-meta text-ink-faint">
               {workYearRange(projects)}

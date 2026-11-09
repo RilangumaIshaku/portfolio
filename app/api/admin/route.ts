@@ -4,6 +4,8 @@ import { readData, writeData, SECTION_KEYS, USE_KV, getStorageInfo } from "@/lib
 import { createToken, verifyToken } from "@/lib/auth";
 import { uploadImage } from "@/lib/image-upload";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { mergeWithDefaults } from "@/lib/siteContent";
+import { DEFAULT_COPY, type SiteCopy } from "@/lib/content-defaults";
 
 // Brute-force protection: 10 login attempts per IP per 15 minutes.
 const LOGIN_LIMIT = 10;
@@ -38,6 +40,7 @@ interface SiteContent {
   };
   images: { profile: string; projects: Record<string, string> };
   links: { ctaTarget: string };
+  copy: SiteCopy;
 }
 
 const defaultContent: SiteContent = {
@@ -73,6 +76,7 @@ const defaultContent: SiteContent = {
   links: {
     ctaTarget: "#contact",
   },
+  copy: DEFAULT_COPY,
 };
 
 // ── Helper: invalidate homepage ISR cache ──────────────────
@@ -134,7 +138,9 @@ export async function POST(request: NextRequest) {
 
       // Update content in KV/data store regardless of upload method
       if (key === "profile" || key.startsWith("project-")) {
-        const content = await readData<SiteContent>("content", defaultContent);
+        const content = mergeWithDefaults(
+        await readData<SiteContent>("content", defaultContent)
+      );
         if (key === "profile") {
           content.images.profile = url;
         } else if (key.startsWith("project-")) {
@@ -232,7 +238,9 @@ export async function POST(request: NextRequest) {
 
     // ── Get site content ──
     if (action === "get-content") {
-      const content = await readData<SiteContent>("content", defaultContent);
+      const content = mergeWithDefaults(
+        await readData<SiteContent>("content", defaultContent)
+      );
       return NextResponse.json({ success: true, data: content });
     }
 
@@ -243,7 +251,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Missing section or data" }, { status: 400 });
       }
 
-      const content = await readData<SiteContent>("content", defaultContent);
+      const content = mergeWithDefaults(
+        await readData<SiteContent>("content", defaultContent)
+      );
 
       if (section === "site") {
         content.site = { ...content.site, ...data, socials: { ...content.site.socials, ...data.socials } };
@@ -253,6 +263,16 @@ export async function POST(request: NextRequest) {
         content.hero = { ...content.hero, ...data };
       } else if (section === "links") {
         content.links = { ...content.links, ...data };
+      } else if (section === "copy") {
+        const next = data as Partial<SiteCopy>;
+        content.copy = {
+          about: Array.isArray(next.about) ? next.about : content.copy.about,
+          contact:
+            typeof next.contact === "string"
+              ? next.contact
+              : content.copy.contact,
+          labels: { ...content.copy.labels, ...(next.labels ?? {}) },
+        };
       } else if (section === "images") {
         content.images = { ...content.images, ...data, projects: { ...content.images.projects, ...data.projects } };
       } else {

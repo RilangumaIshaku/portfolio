@@ -9,12 +9,18 @@ export interface Capability {
  * Areas of work, set as a definition list. Each row is separated by the same
  * hairline used elsewhere instead of being boxed into cards.
  */
-export function Capabilities({ items }: { items: Capability[] }) {
+export function Capabilities({
+  items,
+  label = "Capabilities.",
+}: {
+  items: Capability[];
+  label?: string;
+}) {
   if (items.length === 0) return null;
 
   return (
     <section id="capabilities" className="mt-14 scroll-mt-16">
-      <SectionLabel>Capabilities.</SectionLabel>
+      <SectionLabel>{label}</SectionLabel>
 
       <dl className="mt-6">
         {items.map((item) => (

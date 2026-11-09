@@ -2,6 +2,7 @@ import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { siteConfig } from "@/data/siteConfig";
 import { readData } from "@/lib/data-store";
+import { DEFAULT_COPY, type SiteCopy } from "@/lib/content-defaults";
 
 export interface SiteContent {
   site: {
@@ -40,6 +41,8 @@ export interface SiteContent {
   links: {
     ctaTarget: string;
   };
+  /** Copy for the sections that are not per-project. */
+  copy: SiteCopy;
 }
 
 const CONTENT_PATH = path.join(process.cwd(), "data", "site-content.json");
@@ -84,6 +87,7 @@ export const defaults: SiteContent = {
   links: {
     ctaTarget: "#contact",
   },
+  copy: DEFAULT_COPY,
 };
 
 /**
@@ -162,7 +166,7 @@ function normalizeIdentity(content: SiteContent): SiteContent {
 /**
  * Deep-merge raw content with defaults so missing fields are always filled in.
  */
-function mergeWithDefaults(raw: Partial<SiteContent>): SiteContent {
+export function mergeWithDefaults(raw: Partial<SiteContent>): SiteContent {
   const merged = {
     site: { ...defaults.site, ...raw.site, socials: { ...defaults.site.socials, ...raw.site?.socials } },
     seo: { ...defaults.seo, ...raw.seo },
@@ -172,6 +176,17 @@ function mergeWithDefaults(raw: Partial<SiteContent>): SiteContent {
       projects: { ...defaults.images.projects, ...raw.images?.projects },
     },
     links: { ...defaults.links, ...raw.links },
+    copy: {
+      about:
+        Array.isArray(raw.copy?.about) &&
+        raw.copy.about.some((paragraph) => paragraph?.trim())
+          ? raw.copy.about.filter((paragraph) => paragraph?.trim())
+          : defaults.copy.about,
+      contact: raw.copy?.contact?.trim()
+        ? raw.copy.contact
+        : defaults.copy.contact,
+      labels: { ...defaults.copy.labels, ...(raw.copy?.labels ?? {}) },
+    },
   } as SiteContent;
   // Normalize external URLs so scheme-less admin entries can't break links.
   merged.site.telegram = ensureAbsoluteUrl(merged.site.telegram);

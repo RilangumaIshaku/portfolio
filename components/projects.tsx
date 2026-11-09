@@ -8,7 +8,13 @@ import { hasVisuals } from "@/lib/project-visuals";
  * Work is presented twice, exactly as in the reference: one highlighted project
  * at full width, then the rest as a quiet vertical sequence.
  */
-export function Work({ projects }: { projects: Project[] }) {
+export function Work({
+  projects,
+  labels,
+}: {
+  projects: Project[];
+  labels: { highlights: string; projects: string };
+}) {
   if (projects.length === 0) return null;
 
   const [highlight, ...rest] = projects;
@@ -16,7 +22,7 @@ export function Work({ projects }: { projects: Project[] }) {
   return (
     <>
       <section id="work" className="mt-11 scroll-mt-16">
-        <SectionLabel>Highlights.</SectionLabel>
+        <SectionLabel>{labels.highlights}</SectionLabel>
         <div className="mt-6">
           <ProjectEntry
             project={highlight}
@@ -29,7 +35,7 @@ export function Work({ projects }: { projects: Project[] }) {
 
       {rest.length > 0 && (
         <section id="projects" className="mt-14 scroll-mt-16">
-          <SectionLabel>Projects.</SectionLabel>
+          <SectionLabel>{labels.projects}</SectionLabel>
           <div className="mt-6 space-y-10">
             {rest.map((project) => (
               <ProjectEntry

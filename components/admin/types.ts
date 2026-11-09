@@ -1,3 +1,5 @@
+import type { SiteCopy } from "@/lib/content-defaults";
+
 export interface SiteContent {
   site: {
     name: string;
@@ -20,6 +22,7 @@ export interface SiteContent {
   };
   images: { profile: string; projects: Record<string, string> };
   links: { ctaTarget: string };
+  copy: SiteCopy;
 }
 
 export interface AvailabilityData {

@@ -42,20 +42,29 @@ export default async function Home() {
           </div>
 
           <div className="enter enter-delay-2">
-            <Work projects={projects} />
+            <Work projects={projects} labels={content.copy.labels} />
           </div>
 
           <Capabilities
             items={capabilities.filter((item) => item?.title && item?.description)}
+            label={content.copy.labels.capabilities}
           />
 
-          <About />
+          <About
+            paragraphs={content.copy.about}
+            label={content.copy.labels.about}
+          />
 
-          <FAQ items={faqData.filter((item) => item?.question && item?.answer)} />
+          <FAQ
+            items={faqData.filter((item) => item?.question && item?.answer)}
+            label={content.copy.labels.faq}
+          />
 
           <Contact
             email={content.site.email}
             telegram={content.site.telegram}
+            intro={content.copy.contact}
+            label={content.copy.labels.contact}
           />
         </main>
       </div>

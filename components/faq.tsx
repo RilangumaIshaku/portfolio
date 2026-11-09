@@ -12,14 +12,20 @@ export interface FaqItem {
  * Accordion built on hairlines and a CSS grid transition — the open state is
  * the only motion on the page, and it stays under 300ms.
  */
-export function FAQ({ items }: { items: FaqItem[] }) {
+export function FAQ({
+  items,
+  label = "FAQ.",
+}: {
+  items: FaqItem[];
+  label?: string;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   if (items.length === 0) return null;
 
   return (
     <section id="faq" className="mt-14 scroll-mt-16">
-      <SectionLabel>FAQ.</SectionLabel>
+      <SectionLabel>{label}</SectionLabel>
 
       <div className="mt-6">
         {items.map((item, index) => {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readData, readAllSections, SECTION_KEYS } from "@/lib/data-store";
 import { verifyToken } from "@/lib/auth";
+import { mergeWithDefaults } from "@/lib/siteContent";
+import { DEFAULT_COPY, type SiteCopy } from "@/lib/content-defaults";
 
 interface SiteContent {
   site: {
@@ -23,6 +25,7 @@ interface SiteContent {
   };
   images: { profile: string; projects: Record<string, string> };
   links: { ctaTarget: string };
+  copy: SiteCopy;
 }
 
 const defaultContent: SiteContent = {
@@ -58,6 +61,7 @@ const defaultContent: SiteContent = {
   links: {
     ctaTarget: "#contact",
   },
+  copy: DEFAULT_COPY,
 };
 
 /**
@@ -72,7 +76,11 @@ export async function GET(request: NextRequest) {
   try {
     // Fetch everything in parallel
     const [content, availability, allSections] = await Promise.all([
-      readData<SiteContent>("content", defaultContent),
+      // Merge with defaults so the panel always sees every field, including
+      // copy added after this content was last saved.
+      readData<SiteContent>("content", defaultContent).then((stored) =>
+        mergeWithDefaults(stored)
+      ),
       readData<any>("availability", {
         isAvailable: true,
         status: "Available for new projects",

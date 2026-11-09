@@ -25,9 +25,13 @@ const inputClasses =
 export function Contact({
   email,
   telegram,
+  intro,
+  label = "Contact.",
 }: {
   email: string;
   telegram?: string;
+  intro?: string;
+  label?: string;
 }) {
   const [formData, setFormData] = useState<FormData>(EMPTY);
   const [status, setStatus] = useState<Status>("idle");
@@ -64,14 +68,10 @@ export function Contact({
 
   return (
     <section id="contact" className="mt-14 scroll-mt-16">
-      <SectionLabel>Contact.</SectionLabel>
+      <SectionLabel>{label}</SectionLabel>
 
       <div className="mt-6">
-        <p className="text-ink-muted">
-          If you are working on something that needs this kind of care, I would
-          like to hear about it. A short note about the problem is enough to
-          start.
-        </p>
+        <p className="text-ink-muted">{intro}</p>
         <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
           <a href={`mailto:${email}`} className="link">
             {email}
