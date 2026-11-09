@@ -121,7 +121,12 @@ export async function POST(request: NextRequest) {
         if (key === "profile") {
           content.images.profile = url;
         } else if (key.startsWith("project-")) {
-          const projectId = key.replace("project-", "");
+          // The Projects panel used to send "project-<id>-image", which stored
+          // the URL under "<id>-image" — a key no page ever reads. Normalise
+          // both that form and "project-<id>" down to the plain id.
+          const projectId = key
+            .replace(/^project-/, "")
+            .replace(/-image$/, "");
           content.images.projects[projectId] = url;
         }
         const result = await writeData("content", content);

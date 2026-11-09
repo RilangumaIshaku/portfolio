@@ -203,3 +203,16 @@ export async function getSiteContentAsync(): Promise<SiteContent> {
   const raw = await readData<Partial<SiteContent>>("content", defaults);
   return mergeWithDefaults(raw);
 }
+
+/**
+ * Resolve the admin's "Links & SEO" CTA target into an href that works on any
+ * route. A bare "#contact" only resolves on the homepage, so detail pages pass
+ * `fromRoot` and get "/#contact" instead — previously the field was saved but
+ * never used at all.
+ */
+export function ctaHref(target?: string, fromRoot = false): string {
+  const value = (target || "#contact").trim();
+  if (!value) return "#contact";
+  if (!value.startsWith("#")) return value;
+  return fromRoot ? `/${value}` : value;
+}

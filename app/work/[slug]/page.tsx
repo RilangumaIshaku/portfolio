@@ -8,14 +8,15 @@ import { CaseStudyToc } from "@/components/case-study-toc";
 import { CaseViewToggle } from "@/components/case-view-toggle";
 import { BackToTop } from "@/components/back-to-top";
 import { Footer } from "@/components/footer";
-import { getSiteContent } from "@/lib/siteContent";
+import { ctaHref, getSiteContentAsync } from "@/lib/siteContent";
+import { projects, type Project } from "@/data/projects";
 import {
-  getAdjacentProjects,
-  getProject,
-  projects,
-  type Project,
-} from "@/data/projects";
+  getAdjacentProjectsAsync,
+  getProjectAsync,
+} from "@/lib/projects";
 import { getProjectVisuals } from "@/lib/project-visuals";
+
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.id }));
@@ -27,7 +28,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProjectAsync(slug);
 
   if (!project) return { title: "Project not found — David Ishaku" };
 
@@ -49,13 +50,13 @@ export default async function CaseStudyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProjectAsync(slug);
 
   if (!project) notFound();
 
-  const content = getSiteContent();
+  const content = await getSiteContentAsync();
   const image = content.images.projects[project.id] || project.image;
-  const { previous, next } = getAdjacentProjects(project.id);
+  const { previous, next } = await getAdjacentProjectsAsync(project.id);
 
   // The hero image is often also the first gallery entry; showing it twice reads
   // as a mistake, so the duplicate is dropped here.
@@ -87,7 +88,7 @@ export default async function CaseStudyPage({
         <SiteHeader
           site={content.site}
           profileImage={content.images.profile}
-          ctaHref="/#contact"
+          ctaHref={ctaHref(content.links.ctaTarget, true)}
           variant="detail"
         />
 

@@ -9,10 +9,13 @@ export function ImagesSection({
   content,
   flash,
   token,
+  projectIds,
 }: {
   content: SiteContent;
   flash: (t: "success" | "error", m: string) => void;
   token: string;
+  /** Live project ids, so projects added in the admin get an upload slot. */
+  projectIds?: string[];
 }) {
   const [profileImg, setProfileImg] = useState(content.images.profile);
   const [projImages, setProjImages] = useState(content.images.projects);
@@ -62,7 +65,7 @@ export function ImagesSection({
           Project Screenshots
         </p>
         <div className="space-y-3">
-          {PROJECT_IDS.map((id) => (
+          {(projectIds && projectIds.length > 0 ? projectIds : PROJECT_IDS).map((id) => (
             <ImageUploadInline
               key={id}
               label={id.charAt(0).toUpperCase() + id.slice(1)}

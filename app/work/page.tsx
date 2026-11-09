@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/navbar";
 import { WorkGallery } from "@/components/work-gallery";
 import { Footer } from "@/components/footer";
-import { getSiteContent } from "@/lib/siteContent";
-import { projects as projectRecords, workYearRange } from "@/data/projects";
+import { ctaHref, getSiteContentAsync } from "@/lib/siteContent";
+import { workYearRange } from "@/data/projects";
+import { getProjects, withUploadedImages } from "@/lib/projects";
 import { hasVisuals } from "@/lib/project-visuals";
 
 export const metadata: Metadata = {
@@ -13,15 +14,20 @@ export const metadata: Metadata = {
   alternates: { canonical: "/work" },
 };
 
-export default function WorkIndexPage() {
-  const content = getSiteContent();
+// Admin edits land through the data store, so re-render the index regularly.
+export const revalidate = 60;
 
-  const projects = projectRecords.map((project) => ({
-    ...project,
-    image: content.images.projects[project.id] || project.image,
-  }));
+export default async function WorkIndexPage() {
+  const [content, storedProjects] = await Promise.all([
+    getSiteContentAsync(),
+    getProjects(),
+  ]);
 
-  const visuals = projects.filter((project) => hasVisuals(project)).map((p) => p.id);
+  const projects = withUploadedImages(storedProjects, content.images.projects);
+
+  const visuals = projects
+    .filter((project) => hasVisuals(project))
+    .map((project) => project.id);
 
   return (
     <>
@@ -29,7 +35,7 @@ export default function WorkIndexPage() {
         <SiteHeader
           site={content.site}
           profileImage={content.images.profile}
-          ctaHref="/#contact"
+          ctaHref={ctaHref(content.links.ctaTarget, true)}
           variant="detail"
         />
 
@@ -39,7 +45,7 @@ export default function WorkIndexPage() {
               Work Gallery
             </h1>
             <p className="mt-3 text-meta text-ink-faint">
-              {workYearRange(projectRecords)}
+              {workYearRange(projects)}
             </p>
           </header>
 

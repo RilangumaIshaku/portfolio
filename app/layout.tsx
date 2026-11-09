@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "@fontsource-variable/inter/wght.css";
 import "@fontsource-variable/fraunces/full.css";
 import "./globals.css";
-import { getSiteContent } from "@/lib/siteContent";
+import { getSiteContentAsync } from "@/lib/siteContent";
 import { JsonLd } from "@/components/json-ld";
 import { MediaCursor } from "@/components/media-cursor";
 import { SoundToggle } from "@/components/sound-toggle";
@@ -18,8 +18,8 @@ import { SITE_URL, absoluteUrl } from "@/lib/site-url";
  * commercial licences and are not shipped here.)
  */
 
-export function generateMetadata(): Metadata {
-  const content = getSiteContent();
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getSiteContentAsync();
   // Empty ogImage → let the generated /opengraph-image route supply the card.
   // A configured path is resolved against the real origin instead of being
   // emitted relative to a placeholder domain.

@@ -10,44 +10,35 @@ import {
   AlertCircle,
   Globe,
   Type,
-  User,
   ImageIcon,
   Link,
   Briefcase,
-  MessageSquare,
   HelpCircle,
-  Layers,
   FolderOpen,
   Menu,
 } from "lucide-react";
 
 // ── Types ───────────────────────────────────────────────────
-import type { SiteContent, AvailabilityData } from "@/components/admin/types";
+import type { SiteContent } from "@/components/admin/types";
 
 // ── Section components ──────────────────────────────────────
 import { HeroSection } from "@/components/admin/hero-section";
 import { ServicesSection } from "@/components/admin/services-section";
 import { ProjectsSection } from "@/components/admin/projects-section";
-import { ProcessSection } from "@/components/admin/process-section";
-import { TestimonialsSection } from "@/components/admin/testimonials-section";
 import { FaqSection } from "@/components/admin/faq-section";
 import { SiteSection } from "@/components/admin/site-section";
 import { ImagesSection } from "@/components/admin/images-section";
 import { LinksSection } from "@/components/admin/links-section";
-import { AvailabilitySection } from "@/components/admin/availability-section";
 import { JobsSection } from "@/components/admin/jobs-section";
 
 type Section =
   | "hero"
   | "services"
   | "projects"
-  | "process"
-  | "testimonials"
   | "faq"
   | "site"
   | "images"
   | "links"
-  | "availability"
   | "jobs";
 
 interface NavItem {
@@ -61,18 +52,10 @@ const NAV_ITEMS: NavItem[] = [
   { id: "hero", label: "Hero", icon: Type, group: "Content" },
   { id: "services", label: "Services", icon: Briefcase, group: "Content" },
   { id: "projects", label: "Projects", icon: FolderOpen, group: "Content" },
-  { id: "process", label: "Process", icon: Layers, group: "Content" },
-  {
-    id: "testimonials",
-    label: "Testimonials",
-    icon: MessageSquare,
-    group: "Content",
-  },
   { id: "faq", label: "FAQ", icon: HelpCircle, group: "Content" },
   { id: "site", label: "Site Info", icon: Globe, group: "Settings" },
   { id: "images", label: "Images", icon: ImageIcon, group: "Settings" },
   { id: "links", label: "Links & SEO", icon: Link, group: "Settings" },
-  { id: "availability", label: "Availability", icon: User, group: "Settings" },
   { id: "jobs", label: "Job Scraper", icon: Briefcase, group: "Tools" },
 ];
 
@@ -124,8 +107,6 @@ export default function AdminPage() {
   const [activeSection, setActiveSection] = useState<Section>("hero");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [content, setContent] = useState<SiteContent | null>(null);
-  const [availability, setAvailability] =
-    useState<AvailabilityData | null>(null);
   const [saveMsg, setSaveMsg] = useState<{
     type: "success" | "error";
     text: string;
@@ -135,9 +116,7 @@ export default function AdminPage() {
 
   const [services, setServices] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
-  const [testimonials, setTestimonials] = useState<any[]>([]);
   const [faqs, setFaqs] = useState<any[]>([]);
-  const [processSteps, setProcessSteps] = useState<any[]>([]);
   const [advantages, setAdvantages] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
 
@@ -169,12 +148,9 @@ export default function AdminPage() {
             if (debug?.storage) setStorageInfo(debug.storage.message);
           })
           .catch(() => {});
-        if (d.availability) setAvailability(d.availability);
         if (d.services) setServices(d.services);
         if (d.projects) setProjects(d.projects);
-        if (d.testimonials) setTestimonials(d.testimonials);
         if (d.faq) setFaqs(d.faq);
-        if (d.process) setProcessSteps(d.process);
         if (d.advantages) setAdvantages(d.advantages);
         if (d.jobs) setJobs(d.jobs);
       })
@@ -217,7 +193,6 @@ export default function AdminPage() {
     setToken(null);
     setPassword("");
     setContent(null);
-    setAvailability(null);
   };
 
   const flash = (type: "success" | "error", text: string) => {
@@ -253,35 +228,6 @@ export default function AdminPage() {
       if (!res.ok) flash("error", json.error || "Failed to save");
       else {
         if (json.data) setContent(json.data);
-        flash("success", "Saved");
-      }
-    } catch {
-      flash("error", "Connection failed");
-    }
-    setLoading(false);
-  };
-
-  const saveAvailability = async () => {
-    if (!availability) return;
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-token": token!,
-        },
-        body: JSON.stringify({ action: "update", ...availability }),
-      });
-      if (res.status === 401) {
-        forceLogout();
-        setLoading(false);
-        return;
-      }
-      const json = await res.json();
-      if (!res.ok) flash("error", json.error || "Failed to save");
-      else {
-        if (json.data) setAvailability(json.data);
         flash("success", "Saved");
       }
     } catch {
@@ -557,7 +503,7 @@ export default function AdminPage() {
               {/* Skeleton: save button */}
               <div className="h-11 w-40 rounded-xl bg-white/[0.04]" />
             </div>
-          ) : !content || !availability ? (
+          ) : !content ? (
             <div className="text-center py-32 text-red-400/60 text-sm">
               Failed to load data
             </div>
@@ -586,22 +532,6 @@ export default function AdminPage() {
                   token={token!}
                 />
               )}
-              {activeSection === "process" && (
-                <ProcessSection
-                  data={processSteps}
-                  onSave={(d) => saveSectionData("process", d)}
-                  loading={loading}
-                  token={token!}
-                />
-              )}
-              {activeSection === "testimonials" && (
-                <TestimonialsSection
-                  data={testimonials}
-                  onSave={(d) => saveSectionData("testimonials", d)}
-                  loading={loading}
-                  token={token!}
-                />
-              )}
               {activeSection === "faq" && (
                 <FaqSection
                   data={faqs}
@@ -621,20 +551,13 @@ export default function AdminPage() {
                   content={content}
                   flash={flash}
                   token={token!}
+                  projectIds={projects.map((project) => project.id)}
                 />
               )}
               {activeSection === "links" && (
                 <LinksSection
                   content={content}
                   onSave={saveSection}
-                  loading={loading}
-                />
-              )}
-              {activeSection === "availability" && (
-                <AvailabilitySection
-                  availability={availability}
-                  setAvailability={setAvailability}
-                  onSave={saveAvailability}
                   loading={loading}
                 />
               )}

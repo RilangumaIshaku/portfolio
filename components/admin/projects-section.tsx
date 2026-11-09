@@ -71,7 +71,9 @@ export function ProjectsSection({
   };
   const uploadImg = async (i: number, file: File) => {
     setImgLoading(i);
-    const url = await uploadFile(file, `project-${list[i].id}-image`, token);
+    // Same key the Images panel uses, so the upload lands on the project id
+    // that every page reads rather than a "-image" suffix key.
+    const url = await uploadFile(file, `project-${list[i].id}`, token);
     if (url) update(i, { ...list[i], image: url });
     setImgLoading(null);
   };
@@ -151,6 +153,60 @@ export function ProjectsSection({
                     update(i, { ...item, description: v })
                   }
                   rows={2}
+                />
+              </Field>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Year">
+                  <Input
+                    value={item.year || ""}
+                    onChange={(v) => update(i, { ...item, year: v })}
+                  />
+                </Field>
+                <Field label="Status" hint="Completed · Prototype">
+                  <Input
+                    value={item.status || ""}
+                    onChange={(v) => update(i, { ...item, status: v })}
+                  />
+                </Field>
+                <Field label="Role">
+                  <Input
+                    value={item.role || ""}
+                    onChange={(v) => update(i, { ...item, role: v })}
+                  />
+                </Field>
+              </div>
+              <Field label="Tagline" hint="One line, used in listings">
+                <Input
+                  value={item.tagline || ""}
+                  onChange={(v) => update(i, { ...item, tagline: v })}
+                />
+              </Field>
+              <Field label="Summary">
+                <TextArea
+                  value={item.summary || ""}
+                  onChange={(v) => update(i, { ...item, summary: v })}
+                  rows={2}
+                />
+              </Field>
+              <Field label="Challenge">
+                <TextArea
+                  value={item.challenge || ""}
+                  onChange={(v) => update(i, { ...item, challenge: v })}
+                  rows={3}
+                />
+              </Field>
+              <Field label="Approach">
+                <TextArea
+                  value={item.approach || ""}
+                  onChange={(v) => update(i, { ...item, approach: v })}
+                  rows={3}
+                />
+              </Field>
+              <Field label="Outcome">
+                <TextArea
+                  value={item.result || ""}
+                  onChange={(v) => update(i, { ...item, result: v })}
+                  rows={3}
                 />
               </Field>
               <Field label="Technologies" hint="Comma-separated">

@@ -5,9 +5,12 @@ import { SiteHeader } from "@/components/navbar";
 import { CaseViewToggle } from "@/components/case-view-toggle";
 import { BackToTop } from "@/components/back-to-top";
 import { Footer } from "@/components/footer";
-import { getSiteContent } from "@/lib/siteContent";
-import { getProject, projects } from "@/data/projects";
+import { ctaHref, getSiteContentAsync } from "@/lib/siteContent";
+import { projects } from "@/data/projects";
+import { getProjectAsync } from "@/lib/projects";
 import { getProjectVisuals } from "@/lib/project-visuals";
+
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.id }));
@@ -19,7 +22,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProjectAsync(slug);
 
   if (!project) return { title: "Project not found — David Ishaku" };
 
@@ -40,11 +43,11 @@ export default async function ProjectVisualsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProjectAsync(slug);
 
   if (!project) notFound();
 
-  const content = getSiteContent();
+  const content = await getSiteContentAsync();
   const visuals = getProjectVisuals(project, content.images.projects);
 
   if (visuals.length === 0) notFound();
@@ -55,7 +58,7 @@ export default async function ProjectVisualsPage({
         <SiteHeader
           site={content.site}
           profileImage={content.images.profile}
-          ctaHref="/#contact"
+          ctaHref={ctaHref(content.links.ctaTarget, true)}
           variant="detail"
         />
 
