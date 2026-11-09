@@ -35,16 +35,30 @@ function sweep(now: number, windowMs: number) {
 export function getClientIp(request: {
   headers: { get(name: string): string | null };
 }): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const first = forwarded.split(",")[0]?.trim();
-    if (first) return first;
-  }
-  return (
+  // Only trust headers the platform itself sets. `x-forwarded-for` is a list
+  // that the client can prepend to, so the *first* entry is attacker-controlled
+  // and keying a login limiter on it lets one client mint unlimited identities.
+  // The last entry is the one appended by the proxy nearest to us.
+  const platformIp =
     request.headers.get("x-real-ip") ||
     request.headers.get("cf-connecting-ip") ||
-    "unknown"
-  );
+    request.headers.get("x-vercel-forwarded-for");
+  if (platformIp) {
+    const trimmed = platformIp.split(",").pop()?.trim();
+    if (trimmed) return trimmed;
+  }
+
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const entries = forwarded
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+    const last = entries[entries.length - 1];
+    if (last) return last;
+  }
+
+  return "unknown";
 }
 
 export interface RateLimitResult {

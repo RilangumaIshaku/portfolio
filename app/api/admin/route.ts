@@ -98,7 +98,24 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "No file" }, { status: 400 });
       }
 
-      const ext = file.name.split(".").pop() || "jpg";
+      // Uploads are images only. Derive the extension from the declared MIME
+      // type rather than the client's filename, which previously allowed any
+      // extension — including .svg or .html — to be written into /uploads and
+      // served from the site's own origin.
+      const IMAGE_EXTENSIONS: Record<string, string> = {
+        "image/png": "png",
+        "image/jpeg": "jpg",
+        "image/webp": "webp",
+        "image/avif": "avif",
+        "image/gif": "gif",
+      };
+      const ext = IMAGE_EXTENSIONS[file.type];
+      if (!ext) {
+        return NextResponse.json(
+          { error: "Only PNG, JPEG, WebP, AVIF or GIF images are allowed" },
+          { status: 415 }
+        );
+      }
       const safeName = key.replace(/[^a-zA-Z0-9_-]/g, "_");
       const fileName = `${safeName}-${Date.now()}.${ext}`;
 

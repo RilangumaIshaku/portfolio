@@ -1,58 +1,93 @@
-/**
- * Shared authentication helpers for admin routes.
- *
- * Security improvements over the original approach:
- *  - HMAC-signed tokens (password can't be trivially extracted)
- *  - 24-hour token expiry
- *  - No hardcoded password fallback — ADMIN_PASSWORD env var is required
- */
-
 import crypto from "crypto";
 
-const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
-const SIGNING_KEY = process.env.ADMIN_PASSWORD;
+const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+const CLOCK_SKEW_MS = 60 * 1000;
 
-function getSigningKey(): string {
-  if (!SIGNING_KEY) {
+/**
+ * Admin authentication.
+ *
+ * The previous version used the admin password itself as the HMAC signing key
+ * and embedded `sha256(password)[:16]` in the token payload. Anyone holding a
+ * token could therefore crack the password offline (no rate limit, no lockout)
+ * and, with the same secret, forge tokens. Sessions are now signed with a
+ * separate ADMIN_SESSION_SECRET; ADMIN_PASSWORD is only a fallback so existing
+ * deployments keep working after this change.
+ *
+ * Revocation: a stateless token cannot be invalidated individually without
+ * storage, so the payload carries a generation number. Bumping
+ * ADMIN_SESSION_EPOCH invalidates every live token at once.
+ */
+function getSessionSecret(): string {
+  const secret = process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD;
+  if (!secret) {
+    throw new Error(
+      "ADMIN_SESSION_SECRET (or ADMIN_PASSWORD) is not set. Add it to .env.local."
+    );
+  }
+  return secret;
+}
+
+function getSessionEpoch(): string {
+  return (process.env.ADMIN_SESSION_EPOCH || "1").trim() || "1";
+}
+
+function digest(value: string): Buffer {
+  return crypto.createHash("sha256").update(value, "utf8").digest();
+}
+
+/**
+ * Constant-time password check. The old `password !== key` comparison leaked
+ * the length of the matching prefix through timing.
+ */
+export function passwordMatches(password: string): boolean {
+  const expected = process.env.ADMIN_PASSWORD;
+  if (!expected) {
     throw new Error(
       "ADMIN_PASSWORD environment variable is not set. " +
         "Add it to your .env.local file."
     );
   }
-  return SIGNING_KEY;
+  return crypto.timingSafeEqual(digest(password ?? ""), digest(expected));
 }
 
 /**
  * Create a signed, time-limited admin token.
  * Format: base64url(payload).base64url(signature)
- * Payload: { p: passwordHash, t: timestamp }
+ * Payload: { sid, iat, exp, v } — nothing derived from the password.
  */
 export function createToken(password: string): string {
-  const key = getSigningKey();
-  if (password !== key) {
+  if (!passwordMatches(password)) {
     throw new Error("Invalid password");
   }
 
+  const issuedAt = Date.now();
   const payload = {
-    // Store a hash of the password, not the password itself
-    p: crypto.createHash("sha256").update(password).digest("hex").slice(0, 16),
-    t: Date.now(),
+    sid: crypto.randomBytes(12).toString("base64url"),
+    iat: issuedAt,
+    exp: issuedAt + TOKEN_TTL_MS,
+    v: getSessionEpoch(),
   };
 
-  const payloadB64 = Buffer.from(JSON.stringify(payload)).toString(
-    "base64url"
-  );
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const signature = crypto
-    .createHmac("sha256", key)
-    .update(payloadB64)
+    .createHmac("sha256", getSessionSecret())
+    .update(body)
     .digest("base64url");
 
-  return `${payloadB64}.${signature}`;
+  return `${body}.${signature}`;
+}
+
+interface SessionPayload {
+  sid?: unknown;
+  iat?: unknown;
+  exp?: unknown;
+  v?: unknown;
 }
 
 /**
- * Verify an admin token from a request.
- * Returns true only if the token is valid, signed, and not expired.
+ * Verify an admin token: signature first, then shape, generation and time.
+ * Tokens issued before this change (payload `p`/`t`) fail shape validation, so
+ * they force a fresh login rather than being silently accepted.
  */
 export function verifyToken(request: {
   headers: { get(name: string): string | null };
@@ -60,35 +95,41 @@ export function verifyToken(request: {
   const token = request.headers.get("x-admin-token");
   if (!token) return false;
 
-  try {
-    const key = getSigningKey();
-    const [payloadB64, signature] = token.split(".");
-    if (!payloadB64 || !signature) return false;
+  const [body, signature] = token.split(".");
+  if (!body || !signature) return false;
 
-    // Verify HMAC signature
-    const expectedSig = crypto
+  try {
+    const key = getSessionSecret();
+    const expected = crypto
       .createHmac("sha256", key)
-      .update(payloadB64)
+      .update(body)
       .digest("base64url");
 
-    // Constant-time comparison
+    // Constant-time comparison of the signature.
     if (
-      signature.length !== expectedSig.length ||
+      signature.length !== expected.length ||
       !crypto.timingSafeEqual(
         Buffer.from(signature),
-        Buffer.from(expectedSig)
+        Buffer.from(expected)
       )
     ) {
       return false;
     }
 
-    // Decode and check expiry
     const payload = JSON.parse(
-      Buffer.from(payloadB64, "base64url").toString("utf-8")
-    );
+      Buffer.from(body, "base64url").toString("utf-8")
+    ) as SessionPayload;
 
-    if (!payload.t || typeof payload.t !== "number") return false;
-    if (Date.now() - payload.t > TOKEN_EXPIRY_MS) return false;
+    if (typeof payload.sid !== "string" || payload.sid.length < 8) return false;
+    if (typeof payload.iat !== "number" || typeof payload.exp !== "number") {
+      return false;
+    }
+    if (payload.v !== getSessionEpoch()) return false;
+
+    const now = Date.now();
+    if (now > payload.exp) return false;
+    // A token dated in the future is not a token we issued.
+    if (payload.iat > now + CLOCK_SKEW_MS) return false;
 
     return true;
   } catch {
@@ -97,8 +138,12 @@ export function verifyToken(request: {
 }
 
 /**
- * Get the admin password, throwing a clear error if not configured.
+ * Kept for callers that only need to know whether a password is configured.
  */
 export function getAdminPassword(): string {
-  return getSigningKey();
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    throw new Error("ADMIN_PASSWORD environment variable is not set.");
+  }
+  return password;
 }
